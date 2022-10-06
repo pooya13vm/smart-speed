@@ -1,5 +1,4 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
 import styled from "styled-components";
 
 //components
@@ -42,29 +41,51 @@ const ButtonText = styled.Text`
   font-size: 16px;
 `;
 
-const Home = () => {
+const Home = ({ navigation }) => {
   return (
     <ScreenLayout title={"Smart Speed"}>
       <AdvertisingContainer>
         <AdvertiseText>Doner reklam alani Link verecek</AdvertiseText>
       </AdvertisingContainer>
       <ButtonsContainer>
-        <Button>
+        <Button
+          onPress={() =>
+            navigation.navigate("Test", { title: "Parkur Olustur" })
+          }
+        >
           <ButtonText>Parkur Olustur</ButtonText>
         </Button>
-        <Button>
+        <Button
+          onPress={() =>
+            navigation.navigate("Test", { title: "Turnuva Olustur" })
+          }
+        >
           <ButtonText>Turnuva Olustur</ButtonText>
         </Button>
-        <Button>
+        <Button
+          onPress={() =>
+            navigation.navigate("Test", { title: "katilimci Listesi" })
+          }
+        >
           <ButtonText>katilimci Listesi</ButtonText>
         </Button>
-        <Button>
+        <Button
+          onPress={() =>
+            navigation.navigate("Test", { title: "Turnuva Baslat" })
+          }
+        >
           <ButtonText>Turnuva Baslat</ButtonText>
         </Button>
-        <Button>
+        <Button
+          onPress={() =>
+            navigation.navigate("Test", { title: "Gecmis Turnuvalar" })
+          }
+        >
           <ButtonText>Gecmis Turnuvalar</ButtonText>
         </Button>
-        <Button>
+        <Button
+          onPress={() => navigation.navigate("Test", { title: "Sarj Kontrol" })}
+        >
           <ButtonText>Sarj Kontrol</ButtonText>
         </Button>
       </ButtonsContainer>

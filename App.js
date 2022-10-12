@@ -5,6 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Home from "./screens/Home";
 import Test from "./screens/Test";
 import BluetoothConnection from "./screens/BluetoothConnection";
+import Device from "./screens/Device";
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,7 @@ export default function App() {
         <Stack.Screen name="Bluetooth" component={BluetoothConnection} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Test" component={Test} />
+        <Stack.Screen name="Device" component={Device} />
       </Stack.Navigator>
       <StatusBar style="dark" />
     </NavigationContainer>

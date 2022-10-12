@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import { BleManager, Device } from "react-native-ble-plx";
 import { Button, ActivityIndicator, PermissionsAndroid } from "react-native";
 
@@ -22,8 +22,6 @@ const reducer = (state, action) => {
       return state;
   }
 };
-// console.log(manager.state());
-console.log("per re : ", PermissionsAndroid.RESULTS);
 const BluetoothConnection = () => {
   const [scannedDevices, dispatch] = useReducer(reducer, []);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +29,16 @@ const BluetoothConnection = () => {
   const requestLocationPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+        {
+          title: "Location permission for bluetooth scanning",
+          message: "Smart speed need to use bluetooth",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        }
+      );
+      const granted2 = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
         {
           title: "Location permission for bluetooth scanning",
@@ -40,8 +48,33 @@ const BluetoothConnection = () => {
           buttonPositive: "OK",
         }
       );
-      console.log("granted : ", granted);
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      const granted3 = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADVERTISE,
+        {
+          title: "Location permission for bluetooth scanning",
+          message: "Smart speed need to use bluetooth",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        }
+      );
+      const granted4 = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: "Location permission for bluetooth scanning",
+          message: "Smart speed need to use bluetooth",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        }
+      );
+
+      if (
+        granted === PermissionsAndroid.RESULTS.GRANTED &&
+        granted2 === PermissionsAndroid.RESULTS.GRANTED &&
+        granted3 === PermissionsAndroid.RESULTS.GRANTED &&
+        granted4 === PermissionsAndroid.RESULTS.GRANTED
+      ) {
         console.log("Location permission for bluetooth scanning granted");
         return true;
       } else {
@@ -53,9 +86,10 @@ const BluetoothConnection = () => {
       return false;
     }
   };
-  console.log("permission : ", requestLocationPermission());
+
   const scanDevices = () => {
     const permission = requestLocationPermission();
+    console.log("permission xxx: ", permission);
     // display the Activityindicator
     setIsLoading(true);
 
@@ -64,11 +98,13 @@ const BluetoothConnection = () => {
       manager.startDeviceScan(null, null, (error, scannedDevice) => {
         if (error) {
           console.warn(error);
+          console.log("there is error in finding d");
         }
 
         // if a device is detected add the device to the list by dispatching the action into the reducer
         if (scannedDevice) {
           dispatch({ type: "ADD_DEVICE", payload: scannedDevice });
+          console.log(Device.name);
         }
       });
     }

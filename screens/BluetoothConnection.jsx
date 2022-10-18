@@ -1,5 +1,5 @@
 import React, { useState, useReducer, useEffect } from "react";
-import { BleManager, Device } from "react-native-ble-plx";
+import { BleManager } from "react-native-ble-plx";
 import {
   Button,
   ActivityIndicator,
@@ -11,7 +11,7 @@ import ScreenLayout from "../components/ScreenLayout";
 import DeviceCard from "../components/DeviceCard";
 
 const manager = new BleManager();
-console.log("D  :  ", Device.name);
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "ADD_DEVICE":
@@ -111,8 +111,6 @@ const BluetoothConnection = () => {
         // if a device is detected add the device to the list by dispatching the action into the reducer
         if (scannedDevice) {
           dispatch({ type: "ADD_DEVICE", payload: scannedDevice });
-          console.log(scannedDevice.name);
-          console.log(manager.state());
         }
       });
     }

@@ -4,6 +4,7 @@ import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import { Base64 } from "../lib/base64";
 
 const DeviceCard = ({ device }) => {
+  // console.log(device);
   const navigation = useNavigation();
 
   const [isConnected, setIsConnected] = useState(false);

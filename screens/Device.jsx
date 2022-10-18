@@ -1,19 +1,56 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Text, ScrollView, Button, View, StyleSheet } from "react-native";
 import { ServiceCard } from "../components/ServiceCard";
+import { BleManager } from "react-native-ble-plx";
+
+const manager = new BleManager();
 
 const Device = ({ route, navigation }) => {
   // get the device object which was given through navigation params
   const { device } = route.params;
+
+  // const writeOnDevice = async (device, value) => {
+  //   const service = "af493e2a-f002-11eb-9a03-0242ac130003";
+  //   const characteristicTX = "af49423a-f002-11eb-9a03-0242ac130003";
+  //   const characteristicRX = "af49414a-f002-11eb-9a03-0242ac130003";
+  //   if (device) {
+  //     try {
+  //       device.monitorCharacteristicForService(
+  //         service,
+  //         characteristicTX,
+  //         (error, characteristic) => {
+  //           if (error) {
+  //             console.log(error);
+  //           } else {
+  //             setCharacteristicValue(() => {
+  //               return [
+  //                 { id: "123", value: base64.decode(characteristic.value) },
+  //               ];
+  //             });
+  //           }
+  //         }
+  //       );
+  //       device.writeCharacteristicWithResponseForService(
+  //         service,
+  //         characteristicRX,
+  //         base64.encode(value)
+  //       );
+  //       console.log("Writing to RX:", value);
+  //     } catch (err) {
+  //       console.log("deviceNotification catch error:", err);
+  //     }
+  //   }
+  // };
 
   const [isConnected, setIsConnected] = useState(false);
   const [services, setServices] = useState([]);
 
   // handle the device disconnection
   const disconnectDevice = useCallback(async () => {
-    navigation.goBack();
+    navigation.goBack("Bluetooth");
     const isDeviceConnected = await device.isConnected();
     if (isDeviceConnected) {
+      // if (device) {
       await device.cancelConnection();
     }
   }, [device, navigation]);
@@ -29,13 +66,13 @@ const Device = ({ route, navigation }) => {
         await connectedDevice.discoverAllServicesAndCharacteristics();
       // get the services only
       const discoveredServices = await allServicesAndCharacteristics.services();
-      setServices(discoveredServices);
+      // setServices(discoveredServices);
     };
 
     getDeviceInformations();
 
     device.onDisconnected(() => {
-      navigation.navigate("Home");
+      navigation.navigate("Device");
     });
 
     // give a callback to the useEffect to disconnect the device when we will leave the device screen
@@ -43,7 +80,7 @@ const Device = ({ route, navigation }) => {
       disconnectDevice();
     };
   }, [device, disconnectDevice, navigation]);
-
+  console.log(services);
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Button title="disconnect" onPress={disconnectDevice} />
@@ -61,6 +98,21 @@ const Device = ({ route, navigation }) => {
         {services &&
           services.map((service) => <ServiceCard service={service} />)}
       </View>
+      <Button
+        title="send to device"
+        onPress={() => {
+          writeOnDevice(device, "hello");
+          manager
+            .writeCharacteristicWithResponseForDevice(
+              "58:7A:62:4F:EF:6D",
+              manager.characteristicsForDevice(device.id),
+              "ok"
+            )
+            .catch((error) => {
+              console.log(error);
+            });
+        }}
+      />
     </ScrollView>
   );
 };
@@ -68,6 +120,7 @@ const Device = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 12,
+    marginTop: "10%",
   },
 
   header: {

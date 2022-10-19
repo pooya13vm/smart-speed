@@ -3,9 +3,8 @@ import { BleManager } from "react-native-ble-plx";
 import {
   Button,
   ActivityIndicator,
-  PermissionsAndroid,
   FlatList,
-  Alert,
+  PermissionsAndroid,
 } from "react-native";
 
 import ScreenLayout from "../components/ScreenLayout";
@@ -29,18 +28,19 @@ const reducer = (state, action) => {
       return state;
   }
 };
-manager.state().then((val) => {
-  if (val !== "PoweredOn") {
-    manager.enable().then((val) => console.log("bluetooth is turned on"));
-  }
-});
+
 const BluetoothConnection = () => {
   const [scannedDevices, dispatch] = useReducer(reducer, []);
   const [isLoading, setIsLoading] = useState(false);
   const [isAllowed, setAllowed] = useState(false);
 
   useEffect(() => {
-    const checkPermission = async () => {
+    manager.state().then((val) => {
+      if (val !== "PoweredOn") {
+        manager.enable().then(() => console.log("bluetooth is turned on"));
+      }
+    });
+    const getPermission = async () => {
       try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
@@ -100,7 +100,7 @@ const BluetoothConnection = () => {
         setAllowed(false);
       }
     };
-    checkPermission();
+    getPermission();
   }, []);
 
   const scanDevices = () => {
@@ -142,7 +142,6 @@ const BluetoothConnection = () => {
         keyExtractor={(item) => item.id}
         data={activeDevices}
         renderItem={({ item }) => <DeviceCard device={item} />}
-        // contentContainerStyle={styles.content}
       />
     </ScreenLayout>
   );

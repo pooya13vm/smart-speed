@@ -1,46 +1,54 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Text, ScrollView, Button, View, StyleSheet } from "react-native";
+import {
+  Text,
+  ScrollView,
+  Button,
+  View,
+  StyleSheet,
+  TextInput,
+} from "react-native";
 import { ServiceCard } from "../components/ServiceCard";
 import { BleManager } from "react-native-ble-plx";
 
 const manager = new BleManager();
 
 const Device = ({ route, navigation }) => {
+  const [valueToBle, setValueToBle] = useState("");
   // get the device object which was given through navigation params
   const { device } = route.params;
 
-  // const writeOnDevice = async (device, value) => {
-  //   const service = "af493e2a-f002-11eb-9a03-0242ac130003";
-  //   const characteristicTX = "af49423a-f002-11eb-9a03-0242ac130003";
-  //   const characteristicRX = "af49414a-f002-11eb-9a03-0242ac130003";
-  //   if (device) {
-  //     try {
-  //       device.monitorCharacteristicForService(
-  //         service,
-  //         characteristicTX,
-  //         (error, characteristic) => {
-  //           if (error) {
-  //             console.log(error);
-  //           } else {
-  //             setCharacteristicValue(() => {
-  //               return [
-  //                 { id: "123", value: base64.decode(characteristic.value) },
-  //               ];
-  //             });
-  //           }
-  //         }
-  //       );
-  //       device.writeCharacteristicWithResponseForService(
-  //         service,
-  //         characteristicRX,
-  //         base64.encode(value)
-  //       );
-  //       console.log("Writing to RX:", value);
-  //     } catch (err) {
-  //       console.log("deviceNotification catch error:", err);
-  //     }
-  //   }
-  // };
+  const writeOnDevice = async (device, value) => {
+    const service = "af493e2a-f002-11eb-9a03-0242ac130003";
+    const characteristicTX = "af49423a-f002-11eb-9a03-0242ac130003";
+    const characteristicRX = "af49414a-f002-11eb-9a03-0242ac130003";
+    if (device) {
+      try {
+        device.monitorCharacteristicForService(
+          service,
+          characteristicTX,
+          (error, characteristic) => {
+            if (error) {
+              console.log(error);
+            } else {
+              setCharacteristicValue(() => {
+                return [
+                  { id: "123", value: base64.decode(characteristic.value) },
+                ];
+              });
+            }
+          }
+        );
+        device.writeCharacteristicWithResponseForService(
+          service,
+          characteristicRX,
+          base64.encode(value)
+        );
+        console.log("Writing to RX:", value);
+      } catch (err) {
+        console.log("deviceNotification catch error:", err);
+      }
+    }
+  };
 
   const [isConnected, setIsConnected] = useState(false);
   const [services, setServices] = useState([]);
@@ -98,19 +106,14 @@ const Device = ({ route, navigation }) => {
         {services &&
           services.map((service) => <ServiceCard service={service} />)}
       </View>
+      <TextInput
+        onChangeText={(val) => setValueToBle(val)}
+        style={{ backgroundColor: "yellow", height: 40 }}
+      />
       <Button
         title="send to device"
         onPress={() => {
-          writeOnDevice(device, "hello");
-          manager
-            .writeCharacteristicWithResponseForDevice(
-              "58:7A:62:4F:EF:6D",
-              manager.characteristicsForDevice(device.id),
-              "ok"
-            )
-            .catch((error) => {
-              console.log(error);
-            });
+          writeOnDevice(device, valueToBle);
         }}
       />
     </ScrollView>

@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   PermissionsAndroid,
   FlatList,
+  Alert,
 } from "react-native";
 
 import ScreenLayout from "../components/ScreenLayout";
@@ -28,6 +29,11 @@ const reducer = (state, action) => {
       return state;
   }
 };
+manager.state().then((val) => {
+  if (val !== "PoweredOn") {
+    manager.enable().then((val) => console.log("bluetooth is turned on"));
+  }
+});
 const BluetoothConnection = () => {
   const [scannedDevices, dispatch] = useReducer(reducer, []);
   const [isLoading, setIsLoading] = useState(false);

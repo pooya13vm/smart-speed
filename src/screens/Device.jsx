@@ -73,9 +73,7 @@ const Device = ({ route, navigation }) => {
           .then((allServices) => {
             console.log("all services: ", allServices);
             allServices.services().then((myServices) => {
-              // setInterval(() => {
               console.log("my services : ", myServices);
-              // }, 1000);
               setServices(myServices);
             });
           })
@@ -126,10 +124,10 @@ const Device = ({ route, navigation }) => {
             <Text>{`ServiceData : ${device.serviceData}`}</Text>
             <Text>{`UUIDS : ${device.serviceUUIDs}`}</Text>
           </View>
-          {/* Display a list of all services */}
+          {services.map((item) => console.log(item))}
           {services &&
-            services.map((service) => (
-              <ServiceCard service={service} key={service.id} />
+            services.map((item) => (
+              <ServiceCard service={item} key={item.id} />
             ))}
         </View>
       </ScrollView>

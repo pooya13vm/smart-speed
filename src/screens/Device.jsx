@@ -58,26 +58,35 @@ const Device = ({ route, navigation }) => {
     if (isDeviceConnected) {
       await device.cancelConnection();
     }
-  }, [device, navigation]);
+  }, [navigation]);
 
   useEffect(() => {
-    const getDeviceInformations = async () => {
-      device
-        .connect()
-        .then((device) => {
-          setIsConnected(true);
-          return device.discoverAllServicesAndCharacteristics();
-        })
-        .then((device) => {
-          device.services().then((myServices) => {
-            console.log(myServices);
-            setServices(myServices);
+    const getDeviceInformations = () => {
+      try {
+        device
+          .connect()
+          .then((deviceA) => {
+            setIsConnected(true);
+            console.log("deviceA : ", deviceA);
+            return deviceA.discoverAllServicesAndCharacteristics();
+          })
+          .then((allServices) => {
+            console.log("all services: ", allServices);
+            allServices.services().then((myServices) => {
+              // setInterval(() => {
+              console.log("my services : ", myServices);
+              // }, 1000);
+              setServices(myServices);
+            });
+          })
+          .catch((error) => {
+            navigation.goBack();
+            console.log("there are some problems ....");
           });
-        })
-        .catch((error) => {
-          navigation.goBack();
-          console.log("there are some problems ....");
-        });
+      } catch (error) {
+        console.error(error);
+      }
+
       //// connect to the device
       // const connectedDevice = await device.connect();
       // setIsConnected(true);
@@ -119,7 +128,9 @@ const Device = ({ route, navigation }) => {
           </View>
           {/* Display a list of all services */}
           {services &&
-            services.map((service) => <ServiceCard service={service} />)}
+            services.map((service) => (
+              <ServiceCard service={service} key={service.id} />
+            ))}
         </View>
       </ScrollView>
       <TextInput

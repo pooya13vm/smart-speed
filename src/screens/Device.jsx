@@ -8,7 +8,7 @@ import {
   StatusBar,
   TextInput,
 } from "react-native";
-import { ServiceCard } from "../components/ServiceCard";
+import ServiceCard from "../components/ServiceCard";
 
 const Device = ({ route, navigation }) => {
   const [valueToBle, setValueToBle] = useState("");
@@ -67,36 +67,20 @@ const Device = ({ route, navigation }) => {
           .connect()
           .then((deviceA) => {
             setIsConnected(true);
-            console.log("deviceA : ", deviceA);
             return deviceA.discoverAllServicesAndCharacteristics();
           })
           .then((allServices) => {
-            console.log("all services: ", allServices);
             allServices.services().then((myServices) => {
-              console.log("my services : ", myServices);
               setServices(myServices);
             });
           })
           .catch((error) => {
             navigation.goBack();
-            console.log("there are some problems ....");
           });
       } catch (error) {
         console.error(error);
       }
-
-      //// connect to the device
-      // const connectedDevice = await device.connect();
-      // setIsConnected(true);
-      //// discover all device services and characteristics
-      // const allServicesAndCharacteristics =
-      //   await connectedDevice.discoverAllServicesAndCharacteristics();
-
-      //// get the services only
-      // const discoveredServices = await allServicesAndCharacteristics.services();
-      // setServices(discoveredServices);
     };
-
     getDeviceInformations();
 
     device.onDisconnected(() => {
@@ -124,11 +108,9 @@ const Device = ({ route, navigation }) => {
             <Text>{`ServiceData : ${device.serviceData}`}</Text>
             <Text>{`UUIDS : ${device.serviceUUIDs}`}</Text>
           </View>
-          {services.map((item) => console.log(item))}
-          {services &&
-            services.map((item) => (
-              <ServiceCard service={item} key={item.id} />
-            ))}
+          {services.length > 0 && (
+            <ServiceCard service={services[0]} key={services[0].id} />
+          )}
         </View>
       </ScrollView>
       <TextInput

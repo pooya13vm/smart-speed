@@ -12,7 +12,7 @@ const decodeBleString = (value) => {
 
 const CharacteristicCard = ({ char }) => {
   const [measure, setMeasure] = useState("");
-  const [descriptor, setDescriptor] = (useState < string) | (null > "");
+  const [descriptor, setDescriptor] = useState();
 
   useEffect(() => {
     // discover characteristic descriptors

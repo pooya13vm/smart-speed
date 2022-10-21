@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { CharacteristicCard } from "./CharacteristicCard";
-import { DescriptorCard } from "./DescriptorCard";
+import DescriptorCard from "./DescriptorCard";
+import CharacteristicCard from "./CharacteristicCard";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const UART_SERVICE_UUID =
   "6E400001-B5A3-F393-­E0A9-­E50E24DCCA9E".toLowerCase();
 
 const ServiceCard = ({ service }) => {
-  console.log("in card : ", service);
+  console.log("service in card", service);
   const [descriptors, setDescriptors] = useState([]);
   const [characteristics, setCharacteristics] = useState([]);
   const [areCharacteristicsVisible, setAreCharacteristicsVisible] =

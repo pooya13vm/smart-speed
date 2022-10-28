@@ -1,48 +1,45 @@
 import React from "react";
-import { View, Dimensions } from "react-native";
-import styled from "styled-components";
+import { View, Image, Text } from "react-native";
+import LinearGradient from "react-native-linear-gradient";
+import { COLORS } from "../tools/colors";
+import BackGround from "./BackGround";
 
-const { height, width } = Dimensions.get("window");
-let bodyHeight = height - 130;
-
-const Header = styled.View`
-  width: 100%;
-  height: 65px;
-  justify-content: center;
-  align-items: center;
-  background-color: #c93838;
-  border-bottom-right-radius: 20px;
-  border-bottom-left-radius: 20px;
-  margin-top: 40px;
-`;
-const Body = styled.View`
-  height: ${bodyHeight}px;
-  width: 100%;
-  align-items: center;
-`;
-const Footer = styled.View`
-  width: 100%;
-  height: 65px;
-  justify-content: center;
-  align-items: center;
-  background-color: #c93838;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-`;
-const TitleText = styled.Text`
-  color: #fefefe;
-  font-size: 22px;
-`;
-
-const ScreenLayout = ({ title, children }) => {
+const ScreenLayout = ({ children, title }) => {
   return (
-    <View style={{ flex: 1 }}>
-      <Header>
-        <TitleText>{title}</TitleText>
-      </Header>
-      <Body>{children}</Body>
-      <Footer></Footer>
-    </View>
+    <BackGround>
+      <LinearGradient
+        colors={["#fefefe", "#D7D7D6"]}
+        style={{
+          // backgroundColor: "#D7D7D6",
+          height: "82%",
+          width: "90%",
+          alignSelf: "center",
+          marginTop: "25%",
+          borderRadius: 30,
+          alignItems: "center",
+        }}
+      >
+        <Image
+          source={require("../assets/images/Screen_Shot_2022-10-27_at_13.56.36-removebg.png")}
+          style={{
+            width: 150,
+            height: 150,
+            marginTop: -60,
+            backgroundColor: "#fefefe",
+            borderRadius: 100,
+          }}
+        />
+        {title && (
+          <Text
+            style={{ fontSize: 24, fontWeight: "bold", color: COLORS.darkBlue }}
+          >
+            {title}
+          </Text>
+        )}
+
+        {children}
+      </LinearGradient>
+    </BackGround>
   );
 };
 

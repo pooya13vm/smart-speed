@@ -6,6 +6,8 @@ export const AppContext = createContext({});
 export const AppProvider = ({ children }) => {
   const [contact, setContact] = useState([]);
   const [isRegistered, setRegistered] = useState(false);
+  const [parkur, setParkur] = useState([]);
+  const [persons, setPersons] = useState([]);
 
   const checkStorage = async () => {
     try {
@@ -100,6 +102,10 @@ export const AppProvider = ({ children }) => {
         contact,
         checkStorage,
         saveToStorage,
+        parkur,
+        setParkur,
+        persons,
+        setPersons,
       }}
     >
       {children}

@@ -14,7 +14,7 @@ const ButtonsContainer = styled.View`
   justify-content: space-between;
   flex-direction: row;
   flex-wrap: wrap;
-  ${"" /* height: 50%; */}
+  padding-vertical: 10%;
 `;
 const Button = styled.TouchableOpacity`
   width: 120px;
@@ -66,28 +66,33 @@ const Home = ({ navigation }) => {
           <Icon name="road" size={24} color={COLORS.darkGreen} />
           <ButtonText>Parkur Oluştur</ButtonText>
         </Button>
-        <Button onPress={() => navigation.navigate("TurnuvaOL")}>
+        {/* <Button onPress={() => navigation.navigate("TurnuvaOL")}>
           <Icon name="tachometer" size={24} color={COLORS.darkGreen} />
           <ButtonText>Turnuva Oluştur</ButtonText>
-        </Button>
+        </Button> */}
         <Button onPress={() => navigation.navigate("Katilimci")}>
-          <Icon name="list" size={24} color={COLORS.darkGreen} />
-          <ButtonText>katilimci Listesi</ButtonText>
-        </Button>
-        <Button onPress={() => navigation.navigate("TurnuvaBA")}>
-          <Icon name="flag-checkered" size={24} color={COLORS.darkGreen} />
-          <ButtonText>Turnuva Başlat</ButtonText>
+          <Icon name="users" size={24} color={COLORS.darkGreen} />
+          <ButtonText>Katılımcı Yönetimi</ButtonText>
         </Button>
         <Button onPress={() => navigation.navigate("Gecmis")}>
           <Icon name="history" size={24} color={COLORS.darkGreen} />
           <ButtonText>Geçmiş Turnuvalar</ButtonText>
         </Button>
+        <Button onPress={() => navigation.navigate("TurnuvaBA")}>
+          <Icon name="flag-checkered" size={24} color={COLORS.darkGreen} />
+          <ButtonText>Turnuva Başlat</ButtonText>
+        </Button>
+
         <Button onPress={() => navigation.navigate("Sarj")}>
           <Icon name="battery" size={24} color={COLORS.darkGreen} />
           <ButtonText>şarj kontrol</ButtonText>
         </Button>
+        <Button onPress={() => navigation.navigate("Sarj")}>
+          <Icon name="bluetooth-b" size={24} color={COLORS.darkGreen} />
+          <ButtonText>Bağlamak</ButtonText>
+        </Button>
       </ButtonsContainer>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={{
           alignItems: "center",
           borderColor: COLORS.darkBlue,
@@ -100,10 +105,9 @@ const Home = ({ navigation }) => {
           borderRadius: 100,
           padding: 5,
         }}
-      >
-        <Icon name="bluetooth-b" size={24} color={COLORS.darkGreen} />
-        <ButtonText>Cihaza Bağlan</ButtonText>
-      </TouchableOpacity>
+      > */}
+
+      {/* </TouchableOpacity> */}
     </ScreenLayout>
   );
 };

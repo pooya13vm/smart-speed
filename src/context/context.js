@@ -8,6 +8,9 @@ export const AppProvider = ({ children }) => {
   const [isRegistered, setRegistered] = useState(false);
   const [parkur, setParkur] = useState([]);
   const [persons, setPersons] = useState([]);
+  const [race, setRace] = useState({});
+  const [allRaces, setAllRaces] = useState([]);
+  console.log(allRaces);
 
   const checkStorage = async () => {
     try {
@@ -31,6 +34,11 @@ export const AppProvider = ({ children }) => {
       } catch (error) {
         console.log(error);
       }
+    }
+  };
+  const saveRace = () => {
+    if (race.name) {
+      setAllRaces([...allRaces, race]);
     }
   };
 
@@ -106,6 +114,8 @@ export const AppProvider = ({ children }) => {
         setParkur,
         persons,
         setPersons,
+        setRace,
+        saveRace,
       }}
     >
       {children}

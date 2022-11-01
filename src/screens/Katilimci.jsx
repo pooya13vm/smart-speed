@@ -1,13 +1,30 @@
 import React, { useState, useContext } from "react";
-import ScreenLayout from "../components/ScreenLayout";
-import { TouchableOpacity, View, Text, Alert, FlatList } from "react-native";
+import { Alert, FlatList } from "react-native";
 import { Input } from "@rneui/base";
-import { COLORS } from "../tools/colors";
 import { AppContext } from "../context/context";
 import uuid from "react-native-uuid";
 import styled from "styled-components";
 import Lottie from "lottie-react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+
+//components
+import ScreenLayout from "../components/ScreenLayout";
+import { COLORS } from "../tools/colors";
+
+//styled components
+const InputContainer = styled.View`
+  width: 90%;
+  margin-top: 20px;
+`;
+const ButtonContainer = styled.View`
+  flex-direction: row;
+  width: 90%;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: transparent;
+  margin-bottom: 30px;
+  margin-right: 15px;
+`;
 
 const AnimationContainer = styled.View`
   width: 100%;
@@ -18,6 +35,58 @@ const AnimationContainer = styled.View`
 `;
 const AnimationTitle = styled.Text`
   color: ${COLORS.darkBlue};
+`;
+const AddBtn = styled.TouchableOpacity`
+  width: 60px;
+  height: 60px;
+  justify-content: center;
+  align-items: center;
+  border-width: 2px;
+  padding: 10px;
+  border-radius: 60px;
+  border-color: ${COLORS.darkBlue};
+`;
+const ButtonTitle = styled.Text`
+  font-size: 16px;
+  font-weight: bold;
+  color: ${COLORS.darkBlue};
+`;
+const ListContainer = styled.View`
+  width: 98%;
+  height: 50%;
+  border-width: 2px;
+  border-radius: 30px;
+  border-color: ${COLORS.darkBlue};
+  padding-bottom: 10px;
+`;
+const ListTitle = styled.Text`
+  margin-left: 20px;
+  margin-top: 10px;
+  font-size: 17px;
+  font-weight: bold;
+  color: ${COLORS.darkBlue};
+`;
+const ListItemContainer = styled.View`
+  width: 100%;
+  padding-horizontal: 10px;
+  padding-vertical: 5px;
+  margin-vertical: 5px;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+const ListTextContainer = styled.View`
+  flex-direction: row;
+  margin-right: 8px;
+`;
+const ListItemText = styled.Text`
+  font-size: 16px;
+  color: ${COLORS.darkBlue};
+`;
+const DeleteButton = styled.TouchableOpacity`
+  border-width: 0.5px;
+  padding-vertical: 5px;
+  padding-horizontal: 6px;
+  border-radius: 50px;
 `;
 
 const Katilimci = () => {
@@ -40,6 +109,11 @@ const Katilimci = () => {
       }, 2000);
     }
   };
+  const deleteItem = (id) => {
+    const personsCopy = [...persons];
+    const filtered = personsCopy.filter((item) => item.id != id);
+    setPersons(filtered);
+  };
 
   const inputsStyle = {
     backgroundColor: "transparent",
@@ -51,7 +125,7 @@ const Katilimci = () => {
   };
   return (
     <ScreenLayout title="Katılımcı Yönetimi">
-      <View style={{ width: "90%", marginTop: 20 }}>
+      <InputContainer>
         <Input
           value={name}
           label="Katilimci Adı : *"
@@ -69,106 +143,34 @@ const Katilimci = () => {
           }}
           onChangeText={(val) => setName(val)}
         />
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          width: "90%",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          backgroundColor: "transparent",
-          marginBottom: 30,
-          marginRight: 15,
-        }}
-      >
-        <TouchableOpacity
-          style={{
-            width: 60,
-            height: 60,
-            justifyContent: "center",
-            alignItems: "center",
-            borderWidth: 2,
-            padding: 10,
-            borderRadius: 60,
-            borderColor: COLORS.darkBlue,
-          }}
-          onPress={addItemToList}
-        >
-          <Text
-            style={{ fontSize: 16, fontWeight: "bold", color: COLORS.darkBlue }}
-          >
-            Ekle
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View
-        style={{
-          width: "98%",
-          height: "50%",
-          borderWidth: 2,
-          borderRadius: 30,
-          borderColor: COLORS.darkBlue,
-          paddingBottom: 10,
-        }}
-      >
-        <Text
-          style={{
-            marginLeft: 20,
-            marginTop: 10,
-            fontSize: 17,
-            fontWeight: "bold",
-            color: COLORS.darkBlue,
-          }}
-        >
-          Katılımcı Listesi :
-        </Text>
+      </InputContainer>
+      <ButtonContainer>
+        <AddBtn onPress={addItemToList}>
+          <ButtonTitle>Ekle</ButtonTitle>
+        </AddBtn>
+      </ButtonContainer>
+      <ListContainer>
+        <ListTitle>Katılımcı Listesi :</ListTitle>
         {!loading ? (
           <FlatList
             style={{ paddingHorizontal: 20, paddingVertical: 10 }}
             data={persons}
             keyExtractor={(item) => item.id}
             renderItem={({ item, index }) => (
-              <View
-                style={{
-                  width: "100%",
-                  paddingHorizontal: 10,
-                  paddingVertical: 5,
-                  marginVertical: 5,
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <View style={{ flexDirection: "row" }}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: COLORS.darkBlue,
-                      marginRight: 8,
-                    }}
-                  >
-                    {index + 1 + "_"}
-                  </Text>
-                  <Text style={{ fontSize: 16, color: COLORS.darkBlue }}>
-                    {item.name}
-                  </Text>
-                </View>
-                <TouchableOpacity
-                  style={{
-                    borderWidth: 0.5,
-                    paddingVertical: 5,
-                    paddingHorizontal: 6,
-                    borderRadius: 50,
-                  }}
-                >
+              <ListItemContainer>
+                <ListTextContainer>
+                  <ListItemText>{index + 1 + "_"}</ListItemText>
+                  <ListItemText>{item.name}</ListItemText>
+                </ListTextContainer>
+                <DeleteButton onPress={() => deleteItem(item.id)}>
                   <Icon name="trash" size={16} color={COLORS.darkBlue} />
-                </TouchableOpacity>
-              </View>
+                </DeleteButton>
+              </ListItemContainer>
             )}
           />
         ) : (
           <AnimationContainer>
             <Lottie
-              // progress={progress}
               style={{ flex: 1 }}
               source={require("../assets/images/lf30_editor_e33eotje.json")}
               autoPlay
@@ -177,7 +179,7 @@ const Katilimci = () => {
             <AnimationTitle>Kaydetmek için lütfen bekleyin</AnimationTitle>
           </AnimationContainer>
         )}
-      </View>
+      </ListContainer>
     </ScreenLayout>
   );
 };

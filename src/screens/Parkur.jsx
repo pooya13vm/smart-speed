@@ -1,5 +1,6 @@
 import React, { useState, useContext, useRef, useEffect } from "react";
 import { FlatList, Alert, Animated } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Input } from "@rneui/base";
 import styled from "styled-components";
 import Lottie from "lottie-react-native";
@@ -83,6 +84,7 @@ const Parkur = () => {
   const [loading, setLoading] = useState(false);
   //context
   const { parkur, setParkur } = useContext(AppContext);
+
   //animation
   const progress = useRef(new Animated.Value(0)).current;
   const handleLikeAnimation = () => {
@@ -92,9 +94,7 @@ const Parkur = () => {
       useNativeDriver: true,
     }).start();
   };
-  useEffect(() => {
-    handleLikeAnimation();
-  }, []);
+
   //handlers
   const addItemToList = () => {
     if (parkurName === "" || number === "" || tip === "") {
@@ -103,6 +103,7 @@ const Parkur = () => {
       setLoading(true);
       const newParkur = { name: parkurName, number, tip, id: uuid.v4() };
       setParkur([...parkur, newParkur]);
+      saveToStorage([...parkur, newParkur]);
       setParkurName("");
       setNumber("");
       setTimeout(() => {
@@ -114,7 +115,19 @@ const Parkur = () => {
     const parkurCopy = [...parkur];
     const filtered = parkurCopy.filter((item) => item.id != id);
     setParkur(filtered);
+    saveToStorage(filtered);
   };
+  const saveToStorage = async (parkur) => {
+    try {
+      const stringified = await JSON.stringify(parkur);
+      await AsyncStorage.setItem("@parkur", stringified);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    handleLikeAnimation();
+  }, []);
 
   const inputsStyle = {
     backgroundColor: "transparent",

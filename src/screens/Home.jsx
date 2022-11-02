@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from "react";
 import styled from "styled-components";
 import { AppContext } from "../context/context";
-import { BackHandler, Alert, TouchableOpacity, Text } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { TouchableOpacity, StyleSheet } from "react-native";
 
 //components
 
@@ -17,16 +17,20 @@ const ButtonsContainer = styled.View`
   padding-vertical: 10%;
 `;
 const Button = styled.TouchableOpacity`
+  shadow-color: ${COLORS.lightBlue};
+  shadow-offset: 0px 10px;
+  shadow-opacity: 0.23;
+  shadow-radius: 11.27px;
+  elevation: 14;
   width: 120px;
   height: 120px;
   justify-content: center;
-  background-color: transparent;
-  border-width: 1px;
+  background-color: #fefefe;
+  ${"" /* border-width: 1px; */}
   align-items: center;
   margin: 15px auto;
   border-radius: 15px;
   padding: 10px;
-  ${"" /* background-color: #e4e4dc; */}
 `;
 const ButtonText = styled.Text`
   color: ${COLORS.darkGreen};
@@ -40,24 +44,6 @@ const Home = ({ navigation }) => {
 
   useEffect(() => {
     saveToStorage(contact);
-    // const backAction = () => {
-    //   Alert.alert("Bekle!", "Çıkmak istediğine emin misin??", [
-    //     {
-    //       text: "Iptal",
-    //       onPress: () => null,
-    //       style: "cancel",
-    //     },
-    //     { text: "Evet", onPress: () => BackHandler.exitApp() },
-    //   ]);
-    //   return true;
-    // };
-
-    // const backHandler = BackHandler.addEventListener(
-    //   "hardwareBackPress",
-    //   backAction
-    // );
-
-    // return () => backHandler.remove();
   }, []);
   return (
     <ScreenLayout>
@@ -66,10 +52,6 @@ const Home = ({ navigation }) => {
           <Icon name="road" size={24} color={COLORS.darkGreen} />
           <ButtonText>Parkur Oluştur</ButtonText>
         </Button>
-        {/* <Button onPress={() => navigation.navigate("TurnuvaOL")}>
-          <Icon name="tachometer" size={24} color={COLORS.darkGreen} />
-          <ButtonText>Turnuva Oluştur</ButtonText>
-        </Button> */}
         <Button onPress={() => navigation.navigate("Katilimci")}>
           <Icon name="users" size={24} color={COLORS.darkGreen} />
           <ButtonText>Katılımcı Yönetimi</ButtonText>
@@ -92,24 +74,30 @@ const Home = ({ navigation }) => {
           <ButtonText>Bağlamak</ButtonText>
         </Button>
       </ButtonsContainer>
-      {/* <TouchableOpacity
-        style={{
-          alignItems: "center",
-          borderColor: COLORS.darkBlue,
-          borderWidth: 2,
-          width: 100,
-          height: 100,
-          justifyContent: "center",
-          borderRadius: 10,
-          marginTop: 10,
-          borderRadius: 100,
-          padding: 5,
-        }}
-      > */}
-
-      {/* </TouchableOpacity> */}
     </ScreenLayout>
   );
 };
+
+// const styles = StyleSheet.create({
+//   button: {
+//     shadowColor: "#000",
+//     shadowOffset: {
+//       width: 0,
+//       height: 7,
+//     },
+//     shadowOpacity: 0.43,
+//     shadowRadius: 9.51,
+//     elevation: 15,
+//     width: 120,
+//     height: 120,
+//     justifyContent: "center",
+//     // backgroundColor: "transparent",
+//     borderWidth: 1,
+//     alignItems: "center",
+//     margin: 15,
+//     borderRadius: 15,
+//     padding: 10,
+//   },
+// });
 
 export default Home;

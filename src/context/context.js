@@ -10,7 +10,6 @@ export const AppProvider = ({ children }) => {
   const [persons, setPersons] = useState([]);
   const [race, setRace] = useState({});
   const [allRaces, setAllRaces] = useState([]);
-  console.log(allRaces);
 
   const checkStorage = async () => {
     try {
@@ -23,7 +22,36 @@ export const AppProvider = ({ children }) => {
     } catch (error) {
       console.log(error);
     }
+    try {
+      const getST = await AsyncStorage.getItem("@parkur");
+      const parsST = JSON.parse(getST);
+      if (parsST) {
+        setParkur(parsST);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    try {
+      const getST = await AsyncStorage.getItem("@katilimci");
+      const parsST = JSON.parse(getST);
+      if (parsST) {
+        setPersons(parsST);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    try {
+      const getST = await AsyncStorage.getItem("@turnuva");
+      const parsST = JSON.parse(getST);
+      if (parsST) {
+        setAllRaces(parsST);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
+  console.log("allRaces : ", allRaces);
+
   // AsyncStorage.clear();
 
   const saveToStorage = async (contact) => {
@@ -36,9 +64,18 @@ export const AppProvider = ({ children }) => {
       }
     }
   };
+  const saveTurnuvaToStorage = async (turnuva) => {
+    try {
+      const stringified = await JSON.stringify(turnuva);
+      await AsyncStorage.setItem("@turnuva", stringified);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const saveRace = () => {
     if (race.name) {
       setAllRaces([...allRaces, race]);
+      saveTurnuvaToStorage([...allRaces, race]);
     }
   };
 
@@ -116,6 +153,7 @@ export const AppProvider = ({ children }) => {
         setPersons,
         setRace,
         saveRace,
+        // checkStorage2,
       }}
     >
       {children}

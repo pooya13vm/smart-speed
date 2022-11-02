@@ -54,7 +54,7 @@ const TurnuvaBA = () => {
       let now = new Date();
       let newRace = {
         id: uuid.v4(),
-        date: now.toString(),
+        date: now.toString().slice(4, 21),
         name: turnuvaName,
         parkur: selectedParkur,
         persons: selectedPerson,

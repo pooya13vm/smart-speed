@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Alert, FlatList } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Input } from "@rneui/base";
 import { AppContext } from "../context/context";
 import uuid from "react-native-uuid";
@@ -103,6 +104,7 @@ const Katilimci = () => {
       setLoading(true);
       const newPerson = { name, id: uuid.v4() };
       setPersons([...persons, newPerson]);
+      saveToStorage([...persons, newPerson]);
       setName("");
       setTimeout(() => {
         setLoading(false);
@@ -113,6 +115,14 @@ const Katilimci = () => {
     const personsCopy = [...persons];
     const filtered = personsCopy.filter((item) => item.id != id);
     setPersons(filtered);
+  };
+  const saveToStorage = async (katilimci) => {
+    try {
+      const stringified = await JSON.stringify(katilimci);
+      await AsyncStorage.setItem("@katilimci", stringified);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const inputsStyle = {

@@ -128,15 +128,15 @@ export default function SecondBLE() {
         //Message
         device
           .readCharacteristicForService(SERVICE_UUID, MESSAGE_UUID)
-          .then((valenc) => {
-            setMessage(base64.decode(valenc.value));
+          .then((val) => {
+            setMessage(base64.decode(val.value));
           });
 
         //BoxValue
         device
           .readCharacteristicForService(SERVICE_UUID, BOX_UUID)
-          .then((valenc) => {
-            setBoxValue(StringToBool(base64.decode(valenc.value)));
+          .then((val) => {
+            setBoxValue(StringToBool(base64.decode(val.value)));
           });
 
         //monitor values and tell what to do when receiving an update

@@ -7,7 +7,6 @@ import { StatusBar } from "react-native";
 import Register from "../screens/Register";
 import Home from "../screens/Home";
 import Parkur from "../screens/Parkur";
-import TurnuvaOL from "../screens/TurnuvaOL";
 import Katilimci from "../screens/Katilimci";
 import TurnuvaBA from "../screens/TurnuvaBA";
 import Gecmis from "../screens/Gecmis";
@@ -29,7 +28,6 @@ const AppNavigation = () => {
         {/* <Stack.Screen name="Bluetooth" component={BluetoothConnection} /> */}
         {/* <Stack.Screen name="Device" component={Device} /> */}
         <Stack.Screen name="Parkur" component={Parkur} />
-        <Stack.Screen name="TurnuvaOL" component={TurnuvaOL} />
         <Stack.Screen name="Katilimci" component={Katilimci} />
         <Stack.Screen name="TurnuvaBA" component={TurnuvaBA} />
         <Stack.Screen name="Gecmis" component={Gecmis} />

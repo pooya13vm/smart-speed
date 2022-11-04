@@ -50,7 +50,6 @@ export const AppProvider = ({ children }) => {
       console.log(error);
     }
   };
-  console.log("allRaces : ", allRaces);
 
   // AsyncStorage.clear();
 
@@ -153,7 +152,7 @@ export const AppProvider = ({ children }) => {
         setPersons,
         setRace,
         saveRace,
-        // checkStorage2,
+        allRaces,
       }}
     >
       {children}

@@ -1,13 +1,31 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { AppContext } from "../context/context";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { BleManager } from "react-native-ble-plx";
+import base64 from "react-native-base64";
+import Lottie from "lottie-react-native";
+import {
+  LogBox,
+  View,
+  Animated,
+  Modal,
+  Text,
+  TouchableOpacity,
+} from "react-native";
+
+LogBox.ignoreLogs(["new NativeEventEmitter"]); // Ignore log notification by message
+LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 //components
-
 import ScreenLayout from "../components/ScreenLayout";
 import { COLORS } from "../tools/colors";
+import { getPermission } from "../tools/getPermittion";
+
+const BLTManager = new BleManager();
+const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
+const MESSAGE_UUID = "6d68efe5-04b6-4a85-abc4-c2670b7bf7fd";
+const BOX_UUID = "f27b53ad-c63d-49a0-8c0f-9f297e6cc520";
 
 const ButtonsContainer = styled.View`
   width: 80%;
@@ -26,7 +44,6 @@ const Button = styled.TouchableOpacity`
   height: 120px;
   justify-content: center;
   background-color: #fefefe;
-  ${"" /* border-width: 1px; */}
   align-items: center;
   margin: 15px auto;
   border-radius: 15px;
@@ -38,13 +55,182 @@ const ButtonText = styled.Text`
   font-weight: bold;
   text-align: center;
 `;
+const ModalContainer = styled.View`
+  width: 90%;
+  height: 70%;
+  background-color: white;
+  align-self: center;
+  margin-top: 50%;
+  border-radius: 20px;
+  align-items: center;
+`;
+const AnimationContainer = styled.View`
+  width: 100%;
+  height: 90%;
+  padding: 30px;
+  align-items: center;
+  justify-content: space-between;
+`;
+const AnimationTitle = styled.Text`
+  color: ${COLORS.darkBlue};
+  font-size: 18px;
+  font-weight: bold;
+`;
 
 const Home = ({ navigation }) => {
+  //states
+  const [isAllowed, setAllowed] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [isScanning, setScanning] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [connectedDevice, setConnectedDevice] = useState();
+  const [message, setMessage] = useState();
+  const [boxvalue, setBoxValue] = useState();
+  const [chargeData, setChargeData] = useState([]);
+
+  //context
   const { contact, saveToStorage } = useContext(AppContext);
 
+  const progress = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(progress, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.delay(50),
+        Animated.timing(progress, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.delay(50),
+      ])
+    ).start();
+    //turning on device Bluetooth
+    BLTManager.state().then((val) => {
+      if (val !== "PoweredOn") {
+        BLTManager.enable().then(() => console.log("bluetooth is turned on"));
+      }
+    });
+    getPermission().then((result) => setAllowed(result));
     saveToStorage(contact);
-  }, []);
+  }, [progress, isConnected]);
+  useEffect(() => {
+    setChargeData([message, ...chargeData]);
+    console.log("new data...");
+  }, [message]);
+
+  //handlers
+  const connectingToDevice = () => {
+    setModalVisible(true);
+    if (!isConnected) {
+      setScanning(true);
+      scanDevices();
+    } else {
+    }
+  };
+
+  const scanDevices = async () => {
+    BLTManager.startDeviceScan(null, null, (error, scannedDevice) => {
+      if (error) {
+        console.warn(error);
+      }
+      if (scannedDevice && scannedDevice.name == "BLEExample") {
+        BLTManager.stopDeviceScan();
+        connectDevice(scannedDevice);
+        setScanning(false);
+      }
+    });
+    setTimeout(() => {
+      BLTManager.stopDeviceScan();
+      setScanning(false);
+    }, 5000);
+  };
+
+  const connectDevice = async (device) => {
+    console.log("connecting to Device:", device.name);
+    device
+      .connect()
+      .then((device) => {
+        setConnectedDevice(device);
+        setIsConnected(true);
+        return device.discoverAllServicesAndCharacteristics();
+      })
+      .then((device) => {
+        //  Set what to do when DC is detected
+        BLTManager.onDeviceDisconnected(device.id, (error, device) => {
+          console.log("Device DC");
+          setIsConnected(false);
+        });
+        //Read  values
+        //Message
+        device
+          .readCharacteristicForService(SERVICE_UUID, MESSAGE_UUID)
+          .then((val) => {
+            setMessage(base64.decode(val.value));
+          });
+        //BoxValue
+        device
+          .readCharacteristicForService(SERVICE_UUID, BOX_UUID)
+          .then((val) => {
+            setBoxValue(StringToBool(base64.decode(val.value)));
+          });
+
+        //monitor values and tell what to do when receiving an update
+
+        //Message
+        device.monitorCharacteristicForService(
+          SERVICE_UUID,
+          MESSAGE_UUID,
+          (error, characteristic) => {
+            if (characteristic.value != null) {
+              setMessage(base64.decode(characteristic.value));
+              console.log(
+                "Message update received: ",
+                base64.decode(characteristic.value)
+              );
+            }
+          },
+          "messagetransaction"
+        );
+        //BoxValue
+        device.monitorCharacteristicForService(
+          SERVICE_UUID,
+          BOX_UUID,
+          (error, characteristic) => {
+            if (characteristic.value != null) {
+              setBoxValue(StringToBool(base64.decode(characteristic.value)));
+              setChargeData([
+                StringToBool(base64.decode(characteristic.value)),
+                ...chargeData,
+              ]);
+              console.log(
+                "Box Value update received: ",
+                base64.decode(characteristic.value)
+              );
+            }
+          },
+          "boxtransaction"
+        );
+        console.log("Connection established");
+      });
+  };
+  const animationStyle = {
+    width: 8,
+    height: 8,
+    backgroundColor: isConnected ? "#34B3F1" : "#EB1D36",
+    position: "absolute",
+    top: 15,
+    right: 15,
+    borderRadius: 10,
+    opacity: progress,
+    transform: [{ scale: progress }],
+  };
+  console.log(chargeData);
   return (
     <ScreenLayout>
       <ButtonsContainer>
@@ -64,40 +250,72 @@ const Home = ({ navigation }) => {
           <Icon name="flag-checkered" size={24} color={COLORS.darkGreen} />
           <ButtonText>Turnuva Başlat</ButtonText>
         </Button>
-
         <Button onPress={() => navigation.navigate("Sarj")}>
           <Icon name="battery" size={24} color={COLORS.darkGreen} />
           <ButtonText>şarj kontrol</ButtonText>
         </Button>
-        <Button onPress={() => navigation.navigate("Sarj")}>
+        <Button onPress={connectingToDevice}>
+          <Animated.View style={animationStyle}></Animated.View>
           <Icon name="bluetooth-b" size={24} color={COLORS.darkGreen} />
           <ButtonText>Bağlamak</ButtonText>
         </Button>
       </ButtonsContainer>
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+        <ModalContainer>
+          <AnimationContainer>
+            {!isConnected && isScanning && (
+              <>
+                <AnimationTitle>Tarama ...</AnimationTitle>
+                <Lottie
+                  style={{ flex: 1 }}
+                  source={require("../assets/images/7669-bluetooth-connecting.json")}
+                  autoPlay
+                  loop
+                />
+              </>
+            )}
+            {isConnected && !isScanning && (
+              <>
+                <AnimationTitle>Bağlı</AnimationTitle>
+                <Lottie
+                  style={{ flex: 1 }}
+                  source={require("../assets/images/lf30_editor_keaufdf2.json")}
+                  autoPlay
+                  loop={false}
+                />
+              </>
+            )}
+            {!isConnected && !isScanning && (
+              <>
+                <AnimationTitle>Cihazı Bulamadı</AnimationTitle>
+                <Lottie
+                  style={{ flex: 1 }}
+                  source={require("../assets/images/97526-transaction-failed.json")}
+                  autoPlay
+                  loop={false}
+                />
+              </>
+            )}
+          </AnimationContainer>
+          <TouchableOpacity
+            onPress={() => setModalVisible(false)}
+            style={{
+              width: "30%",
+              height: 40,
+              justifyContent: "center",
+              alignItems: "center",
+              alignSelf: "center",
+              borderWidth: 1,
+              borderRadius: 10,
+              borderColor: COLORS.darkBlue,
+            }}
+          >
+            <AnimationTitle>Tamam</AnimationTitle>
+          </TouchableOpacity>
+        </ModalContainer>
+      </Modal>
     </ScreenLayout>
   );
 };
-
-// const styles = StyleSheet.create({
-//   button: {
-//     shadowColor: "#000",
-//     shadowOffset: {
-//       width: 0,
-//       height: 7,
-//     },
-//     shadowOpacity: 0.43,
-//     shadowRadius: 9.51,
-//     elevation: 15,
-//     width: 120,
-//     height: 120,
-//     justifyContent: "center",
-//     // backgroundColor: "transparent",
-//     borderWidth: 1,
-//     alignItems: "center",
-//     margin: 15,
-//     borderRadius: 15,
-//     padding: 10,
-//   },
-// });
 
 export default Home;

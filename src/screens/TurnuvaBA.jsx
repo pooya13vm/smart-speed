@@ -21,7 +21,8 @@ const TurnuvaBA = () => {
   const [parkurDData, SetParkurDData] = useState([]);
   const [personsData, setPersonsData] = useState([]);
   //context
-  const { parkur, persons, saveRace, setRace } = useContext(AppContext);
+  const { parkur, persons, saveRace, setRace, isConnected, connectedDevice } =
+    useContext(AppContext);
 
   useEffect(() => {
     if (parkur.length > 0) {
@@ -44,24 +45,28 @@ const TurnuvaBA = () => {
 
   //handlers
   const newRaceHandler = () => {
-    if (
-      turnuvaName === "" ||
-      selectedParkur === "" ||
-      selectedPerson.length == 0
-    ) {
-      Alert.alert("uyarı", "Lütfen Formdaki Tüm Girdileri Doldurun");
+    if (isConnected) {
+      if (
+        turnuvaName === "" ||
+        selectedParkur === "" ||
+        selectedPerson.length == 0
+      ) {
+        Alert.alert("uyarı", "Lütfen Formdaki Tüm Girdileri Doldurun.");
+      } else {
+        let now = new Date();
+        let newRace = {
+          id: uuid.v4(),
+          date: now.toString().slice(4, 21),
+          name: turnuvaName,
+          parkur: selectedParkur,
+          persons: selectedPerson,
+          passingTime: [],
+        };
+        setRace(newRace);
+        setModalVisible(true);
+      }
     } else {
-      let now = new Date();
-      let newRace = {
-        id: uuid.v4(),
-        date: now.toString().slice(4, 21),
-        name: turnuvaName,
-        parkur: selectedParkur,
-        persons: selectedPerson,
-        passingTime: [],
-      };
-      setRace(newRace);
-      setModalVisible(true);
+      Alert.alert("uyarı", "Lütfen önce Bluetooth bağlantısını kurun.");
     }
   };
 
@@ -114,6 +119,7 @@ const TurnuvaBA = () => {
         setModalVisible={setModalVisible}
         setRace={setRace}
         turnuvaName={turnuvaName}
+        connectedDevice={connectedDevice}
       />
     </ScreenLayout>
   );

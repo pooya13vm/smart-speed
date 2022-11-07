@@ -1,18 +1,45 @@
-import React from "react";
-import { FlatList, Modal, Text, View } from "react-native";
-import styled from "styled-components";
+import React, { useEffect } from "react";
+import { FlatList, Modal, View, Text } from "react-native";
+// import styled from "styled-components";
 import { Button } from "@rneui/base";
 import { COLORS } from "../tools/colors";
+import TurnuvaItem from "../components/TurnuvaItems";
+import base64 from "react-native-base64";
+import { BleManager } from "react-native-ble-plx";
 
-const ModalContainer = styled.View`
-  width: 90%;
-  height: 90%;
-  background-color: white;
-  align-self: center;
-  margin-top: 10%;
-  border-radius: 20px;
-  align-items: center;
-`;
+const BLTManager = new BleManager();
+
+const BOX_UUID = "f27b53ad-c63d-49a0-8c0f-9f297e6cc520";
+const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
+
+// const ModalContainer = styled.View`
+//   width: 90%;
+//   height: 90%;
+//   background-color: white;
+//   align-self: center;
+//   margin-top: 10%;
+//   border-radius: 20px;
+//   align-items: center;
+// `;
+// const Title = styled.Text`
+//   margin-top: 30px;
+//   font-size: 24px;
+//   font-weight: bold;``
+//   color: ${COLORS.darkBlue};
+// `;
+// const ListContainer = styled.View`
+//   flex-direction: row;
+//   justify-content: space-between;
+//   width: 90%;
+//   border-bottom-width: 2px;
+//   padding-horizontal: 10px;
+//   margin-top: 20px;
+// `;
+// const ListTitle = styled.Text`
+//   font-size: 18px;
+//   font-weight: bold;
+//   color: ${COLORS.darkBlue};
+// `;
 
 const TurnuvaModal = ({
   turnuvaName,
@@ -21,10 +48,38 @@ const TurnuvaModal = ({
   saveRace,
   setModalVisible,
   modalVisible,
+  connectedDevice,
 }) => {
+  useEffect(() => {
+    const sendBoxValue = async () => {
+      BLTManager.writeCharacteristicWithResponseForDevice(
+        connectedDevice.id,
+        SERVICE_UUID,
+        BOX_UUID,
+        base64.encode(selectedPerson.length.toString())
+      ).then((characteristic) => {
+        console.log(
+          "Boxvalue changed to :",
+          base64.decode(characteristic.value)
+        );
+      });
+    };
+    sendBoxValue();
+  }, [selectedPerson]);
+
   return (
     <Modal animationType="slide" visible={modalVisible} transparent={true}>
-      <ModalContainer>
+      <View
+        style={{
+          width: "90%",
+          height: "90%",
+          backgroundColor: "white",
+          alignSelf: "center",
+          marginTop: "10%",
+          borderRadius: 20,
+          alignItems: "center",
+        }}
+      >
         <Text
           style={{
             marginTop: 30,
@@ -46,34 +101,21 @@ const TurnuvaModal = ({
           }}
         >
           <Text
-            style={{
-              fontSize: 18,
-              fontWeight: "bold",
-              color: COLORS.darkBlue,
-            }}
+            style={{ fontSize: 18, fontWeight: "bold", color: COLORS.darkBlue }}
           >
             Sira
           </Text>
           <Text
-            style={{
-              fontSize: 18,
-              fontWeight: "bold",
-              color: COLORS.darkBlue,
-            }}
+            style={{ fontSize: 18, fontWeight: "bold", color: COLORS.darkBlue }}
           >
             Katilimci
           </Text>
           <Text
-            style={{
-              fontSize: 18,
-              fontWeight: "bold",
-              color: COLORS.darkBlue,
-            }}
+            style={{ fontSize: 18, fontWeight: "bold", color: COLORS.darkBlue }}
           >
             Sure
           </Text>
         </View>
-
         <FlatList
           style={{
             marginBottom: 30,
@@ -83,58 +125,12 @@ const TurnuvaModal = ({
           data={selectedPerson}
           keyExtractor={(item) => selectedPerson.indexOf(item)}
           renderItem={({ item, index }) => (
-            <View
-              style={{
-                flexDirection: "row",
-                // justifyContent: "space-between",
-                width: "90%",
-                paddingHorizontal: 10,
-                marginTop: 10,
-                alignSelf: "center",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: COLORS.darkBlue,
-                  width: 30,
-                  marginRight: "10%",
-                  // textAlign: "center",
-                }}
-              >
-                {index + 1}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: COLORS.darkBlue,
-                  width: 100,
-                  marginLeft: "10%",
-                  textAlign: "center",
-                }}
-              >
-                {item}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: COLORS.darkBlue,
-                  width: 70,
-                  marginLeft: "20%",
-
-                  textAlign: "center",
-                }}
-              >
-                00:00
-              </Text>
-            </View>
+            <TurnuvaItem item={item} index={index} />
           )}
         />
-
         <View
           style={{
             flexDirection: "row",
-
             width: "90%",
             alignSelf: "center",
             justifyContent: "space-around",
@@ -172,7 +168,7 @@ const TurnuvaModal = ({
             }}
           />
         </View>
-      </ModalContainer>
+      </View>
     </Modal>
   );
 };

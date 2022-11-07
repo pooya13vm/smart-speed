@@ -7,11 +7,11 @@ import base64 from "react-native-base64";
 import Lottie from "lottie-react-native";
 import {
   LogBox,
-  View,
   Animated,
   Modal,
-  Text,
   TouchableOpacity,
+  View,
+  Alert,
 } from "react-native";
 
 LogBox.ignoreLogs(["new NativeEventEmitter"]); // Ignore log notification by message
@@ -50,7 +50,7 @@ const Button = styled.TouchableOpacity`
   padding: 10px;
 `;
 const ButtonText = styled.Text`
-  color: ${COLORS.darkGreen};
+  color: ${COLORS.darkBlue};
   font-size: 16px;
   font-weight: bold;
   text-align: center;
@@ -66,7 +66,7 @@ const ModalContainer = styled.View`
 `;
 const AnimationContainer = styled.View`
   width: 100%;
-  height: 90%;
+  height: 85%;
   padding: 30px;
   align-items: center;
   justify-content: space-between;
@@ -75,21 +75,28 @@ const AnimationTitle = styled.Text`
   color: ${COLORS.darkBlue};
   font-size: 18px;
   font-weight: bold;
+  text-align: center;
 `;
 
 const Home = ({ navigation }) => {
   //states
   const [isAllowed, setAllowed] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
   const [isScanning, setScanning] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [connectedDevice, setConnectedDevice] = useState();
   const [message, setMessage] = useState();
   const [boxvalue, setBoxValue] = useState();
-  const [chargeData, setChargeData] = useState([]);
 
   //context
-  const { contact, saveToStorage } = useContext(AppContext);
+  const {
+    contact,
+    saveToStorage,
+    chargeData,
+    setChargeData,
+    isConnected,
+    setIsConnected,
+    connectedDevice,
+    setConnectedDevice,
+  } = useContext(AppContext);
 
   const progress = useRef(new Animated.Value(0)).current;
 
@@ -120,17 +127,24 @@ const Home = ({ navigation }) => {
     saveToStorage(contact);
   }, [progress, isConnected]);
   useEffect(() => {
-    setChargeData([message, ...chargeData]);
-    console.log("new data...");
+    if (message) {
+      if (chargeData.indexOf(message) === -1) {
+        setChargeData([message, ...chargeData]);
+        console.log("new data...");
+      }
+    }
   }, [message]);
 
   //handlers
   const connectingToDevice = () => {
-    setModalVisible(true);
-    if (!isConnected) {
-      setScanning(true);
-      scanDevices();
+    if (isAllowed) {
+      setModalVisible(true);
+      if (!isConnected) {
+        setScanning(true);
+        scanDevices();
+      }
     } else {
+      return Alert.alert("Lütfen ayarlarda Bluetooth erişimine izin verin");
     }
   };
 
@@ -198,26 +212,48 @@ const Home = ({ navigation }) => {
           "messagetransaction"
         );
         //BoxValue
-        device.monitorCharacteristicForService(
-          SERVICE_UUID,
-          BOX_UUID,
-          (error, characteristic) => {
-            if (characteristic.value != null) {
-              setBoxValue(StringToBool(base64.decode(characteristic.value)));
-              setChargeData([
-                StringToBool(base64.decode(characteristic.value)),
-                ...chargeData,
-              ]);
-              console.log(
-                "Box Value update received: ",
-                base64.decode(characteristic.value)
-              );
-            }
-          },
-          "boxtransaction"
-        );
-        console.log("Connection established");
+        // device.monitorCharacteristicForService(
+        //   SERVICE_UUID,
+        //   BOX_UUID,
+        //   (error, characteristic) => {
+        //     if (characteristic.value != null) {
+        //       setBoxValue(StringToBool(base64.decode(characteristic.value)));
+        //       setChargeData([
+        //         StringToBool(base64.decode(characteristic.value)),
+        //         ...chargeData,
+        //       ]);
+        //       console.log(
+        //         "Box Value update received: ",
+        //         base64.decode(characteristic.value)
+        //       );
+        //     }
+        //   },
+        //   "boxtransaction"
+        // );
+        // console.log("Connection established");
       });
+  };
+
+  // handle the device disconnection (poorly)
+  const disconnectBluetooth = async () => {
+    console.log("Disconnecting start");
+    if (connectedDevice != null) {
+      const isDeviceConnected = await connectedDevice.isConnected();
+      if (isDeviceConnected) {
+        BLTManager.cancelTransaction("messagetransaction");
+        BLTManager.cancelTransaction("nightmodetransaction");
+
+        BLTManager.cancelDeviceConnection(connectedDevice.id).then(() =>
+          console.log("DC completed")
+        );
+      }
+
+      const connectionStatus = await connectedDevice.isConnected();
+      if (!connectionStatus) {
+        setIsConnected(false);
+        setModalVisible(false);
+      }
+    }
   };
   const animationStyle = {
     width: 8,
@@ -235,28 +271,28 @@ const Home = ({ navigation }) => {
     <ScreenLayout>
       <ButtonsContainer>
         <Button onPress={() => navigation.navigate("Parkur")}>
-          <Icon name="road" size={24} color={COLORS.darkGreen} />
+          <Icon name="road" size={24} color={COLORS.darkBlue} />
           <ButtonText>Parkur Oluştur</ButtonText>
         </Button>
         <Button onPress={() => navigation.navigate("Katilimci")}>
-          <Icon name="users" size={24} color={COLORS.darkGreen} />
+          <Icon name="users" size={24} color={COLORS.darkBlue} />
           <ButtonText>Katılımcı Yönetimi</ButtonText>
         </Button>
         <Button onPress={() => navigation.navigate("Gecmis")}>
-          <Icon name="history" size={24} color={COLORS.darkGreen} />
+          <Icon name="history" size={24} color={COLORS.darkBlue} />
           <ButtonText>Geçmiş Turnuvalar</ButtonText>
         </Button>
         <Button onPress={() => navigation.navigate("TurnuvaBA")}>
-          <Icon name="flag-checkered" size={24} color={COLORS.darkGreen} />
+          <Icon name="flag-checkered" size={24} color={COLORS.darkBlue} />
           <ButtonText>Turnuva Başlat</ButtonText>
         </Button>
         <Button onPress={() => navigation.navigate("Sarj")}>
-          <Icon name="battery" size={24} color={COLORS.darkGreen} />
+          <Icon name="battery" size={24} color={COLORS.darkBlue} />
           <ButtonText>şarj kontrol</ButtonText>
         </Button>
         <Button onPress={connectingToDevice}>
           <Animated.View style={animationStyle}></Animated.View>
-          <Icon name="bluetooth-b" size={24} color={COLORS.darkGreen} />
+          <Icon name="bluetooth-b" size={24} color={COLORS.darkBlue} />
           <ButtonText>Bağlamak</ButtonText>
         </Button>
       </ButtonsContainer>
@@ -268,7 +304,7 @@ const Home = ({ navigation }) => {
                 <AnimationTitle>Tarama ...</AnimationTitle>
                 <Lottie
                   style={{ flex: 1 }}
-                  source={require("../assets/images/7669-bluetooth-connecting.json")}
+                  source={require("../assets/images/lf30_editor_67friqml.json")}
                   autoPlay
                   loop
                 />
@@ -279,7 +315,7 @@ const Home = ({ navigation }) => {
                 <AnimationTitle>Bağlı</AnimationTitle>
                 <Lottie
                   style={{ flex: 1 }}
-                  source={require("../assets/images/lf30_editor_keaufdf2.json")}
+                  source={require("../assets/images/lf30_editor_wbmr1ykq.json")}
                   autoPlay
                   loop={false}
                 />
@@ -288,30 +324,59 @@ const Home = ({ navigation }) => {
             {!isConnected && !isScanning && (
               <>
                 <AnimationTitle>Cihazı Bulamadı</AnimationTitle>
+                <AnimationTitle>
+                  lütfen cihazı kontrol edip tekrar deneyin
+                </AnimationTitle>
                 <Lottie
                   style={{ flex: 1 }}
-                  source={require("../assets/images/97526-transaction-failed.json")}
+                  source={require("../assets/images/lf30_editor_i9yjhkuv.json")}
                   autoPlay
                   loop={false}
                 />
               </>
             )}
           </AnimationContainer>
-          <TouchableOpacity
-            onPress={() => setModalVisible(false)}
+          <View
             style={{
-              width: "30%",
-              height: 40,
-              justifyContent: "center",
-              alignItems: "center",
-              alignSelf: "center",
-              borderWidth: 1,
-              borderRadius: 10,
-              borderColor: COLORS.darkBlue,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "100%",
+              paddingHorizontal: "5%",
             }}
           >
-            <AnimationTitle>Tamam</AnimationTitle>
-          </TouchableOpacity>
+            {isConnected && !isScanning && (
+              <TouchableOpacity
+                onPress={disconnectBluetooth}
+                style={{
+                  width: "40%",
+                  height: 40,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  alignSelf: "center",
+                  borderWidth: 1,
+                  borderRadius: 10,
+                  borderColor: COLORS.darkBlue,
+                }}
+              >
+                <AnimationTitle>Bağlantıyı Kes</AnimationTitle>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              onPress={() => setModalVisible(false)}
+              style={{
+                width: "40%",
+                height: 40,
+                justifyContent: "center",
+                alignItems: "center",
+                alignSelf: "center",
+                borderWidth: 1,
+                borderRadius: 10,
+                borderColor: COLORS.darkBlue,
+              }}
+            >
+              <AnimationTitle>Tamam</AnimationTitle>
+            </TouchableOpacity>
+          </View>
         </ModalContainer>
       </Modal>
     </ScreenLayout>

@@ -73,9 +73,10 @@ const Gecmis = () => {
   const [selectedRace, setSelectedRace] = useState([]);
   const [listData, setListData] = useState([]);
   const [loading, setLoading] = useState(false);
-
   //context
-  const { allRaces } = useContext(AppContext);
+  const { allRaces, setAllRaces, saveAllRacesToStorage } =
+    useContext(AppContext);
+
   useEffect(() => {
     if (allRaces.length > 0) {
       let data = [];
@@ -88,7 +89,7 @@ const Gecmis = () => {
       }
       setRaceData(data);
     }
-  }, []);
+  }, [allRaces]);
 
   //handlers
   const handleSelectedRace = async (id) => {
@@ -118,6 +119,12 @@ const Gecmis = () => {
       console.log(error);
       setLoading(false);
     }
+  };
+  const deleteHandler = (id) => {
+    const filtered = allRaces.filter((item) => item.id !== id);
+    setAllRaces(filtered);
+    saveAllRacesToStorage(filtered);
+    setSelectedRace([]);
   };
 
   return (
@@ -174,7 +181,9 @@ const Gecmis = () => {
               )}
             </DataTopContainer>
             {!loading && (
-              <ButtonContainer>
+              <ButtonContainer
+                onPress={() => deleteHandler(selectedRace[0].id)}
+              >
                 <Icon name="trash" size={24} color={COLORS.darkBlue} />
               </ButtonContainer>
             )}

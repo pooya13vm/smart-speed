@@ -84,6 +84,7 @@ export const AppProvider = ({ children }) => {
     <AppContext.Provider
       value={{
         // getPermission,
+        race,
         setContact,
         contact,
         checkStorage,

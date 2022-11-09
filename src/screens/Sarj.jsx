@@ -29,7 +29,7 @@ const batteryName = (percentage) => {
   }
 };
 
-const Sarj = () => {
+const Sarj = ({ navigation }) => {
   //context
   const { chargeData } = useContext(AppContext);
 
@@ -62,7 +62,10 @@ const Sarj = () => {
   }, [chargeData]);
 
   return (
-    <ScreenLayout title="şarj kontrol">
+    <ScreenLayout
+      title="şarj kontrol"
+      navigationFunction={() => navigation.goBack()}
+    >
       {isData ? (
         <FlatList
           style={{

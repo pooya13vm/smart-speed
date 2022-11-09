@@ -284,7 +284,7 @@ const Home = ({ navigation }) => {
         </Button>
         <Button onPress={() => navigation.navigate("TurnuvaBA")}>
           <Icon name="flag-checkered" size={24} color={COLORS.darkBlue} />
-          <ButtonText>Turnuva Başlat</ButtonText>
+          <ButtonText>Turnuva Oluştur</ButtonText>
         </Button>
         <Button onPress={() => navigation.navigate("Sarj")}>
           <Icon name="battery" size={24} color={COLORS.darkBlue} />

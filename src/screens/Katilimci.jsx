@@ -90,7 +90,7 @@ const DeleteButton = styled.TouchableOpacity`
   border-radius: 50px;
 `;
 
-const Katilimci = () => {
+const Katilimci = ({ navigation }) => {
   //context
   const { persons, setPersons } = useContext(AppContext);
   //states
@@ -134,7 +134,10 @@ const Katilimci = () => {
     paddingHorizontal: 16,
   };
   return (
-    <ScreenLayout title="Katılımcı Yönetimi">
+    <ScreenLayout
+      title="Katılımcı Yönetimi"
+      navigationFunction={() => navigation.goBack()}
+    >
       <InputContainer>
         <Input
           value={name}

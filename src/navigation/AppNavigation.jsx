@@ -11,6 +11,7 @@ import Katilimci from "../screens/Katilimci";
 import TurnuvaBA from "../screens/TurnuvaBA";
 import Gecmis from "../screens/Gecmis";
 import Sarj from "../screens/Sarj";
+import TurnuvaList from "../screens/TurnuvaList";
 
 const Stack = createStackNavigator();
 
@@ -24,9 +25,7 @@ const AppNavigation = () => {
       >
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Home" component={Home} />
-        {/* <Stack.Screen name="BLE2" component={SecondBLE} /> */}
-        {/* <Stack.Screen name="Bluetooth" component={BluetoothConnection} /> */}
-        {/* <Stack.Screen name="Device" component={Device} /> */}
+        <Stack.Screen name="TurnuvaList" component={TurnuvaList} />
         <Stack.Screen name="Parkur" component={Parkur} />
         <Stack.Screen name="Katilimci" component={Katilimci} />
         <Stack.Screen name="TurnuvaBA" component={TurnuvaBA} />

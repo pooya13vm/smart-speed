@@ -76,7 +76,7 @@ const AnimationTitle = styled.Text`
   color: ${COLORS.darkBlue};
 `;
 
-const Parkur = () => {
+const Parkur = ({ navigation }) => {
   //states
   const [parkurName, setParkurName] = useState("");
   const [number, setNumber] = useState("");
@@ -139,7 +139,10 @@ const Parkur = () => {
   };
 
   return (
-    <ScreenLayout title="Parkur Oluştur">
+    <ScreenLayout
+      title="Parkur Oluştur"
+      navigationFunction={() => navigation.goBack()}
+    >
       <NameInputContainer>
         <Input
           value={parkurName}

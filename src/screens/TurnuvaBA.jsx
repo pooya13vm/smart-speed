@@ -10,19 +10,24 @@ import CircleButton from "../components/CircleButton";
 import { COLORS } from "../tools/colors";
 import DropdownComponent from "../components/Dropdown";
 import MultiSelectComponent from "../components/MultiSelectDD";
-import TurnuvaModal from "../components/TurnuvaModal";
 
-const TurnuvaBA = () => {
+const TurnuvaBA = ({ navigation }) => {
   //states
   const [turnuvaName, setTurnuvaName] = useState("");
   const [selectedParkur, setSelectedParkur] = useState("");
   const [selectedPerson, setSelectedPerson] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
   const [parkurDData, SetParkurDData] = useState([]);
   const [personsData, setPersonsData] = useState([]);
   //context
-  const { parkur, persons, saveRace, setRace, isConnected, connectedDevice } =
-    useContext(AppContext);
+  const {
+    parkur,
+    persons,
+    saveRace,
+    setRace,
+    isConnected,
+    connectedDevice,
+    race,
+  } = useContext(AppContext);
 
   useEffect(() => {
     if (parkur.length > 0) {
@@ -45,33 +50,40 @@ const TurnuvaBA = () => {
 
   //handlers
   const newRaceHandler = () => {
-    if (isConnected) {
-      if (
-        turnuvaName === "" ||
-        selectedParkur === "" ||
-        selectedPerson.length == 0
-      ) {
-        Alert.alert("uyarı", "Lütfen Formdaki Tüm Girdileri Doldurun.");
-      } else {
-        let now = new Date();
-        let newRace = {
-          id: uuid.v4(),
-          date: now.toString().slice(4, 21),
-          name: turnuvaName,
-          parkur: selectedParkur,
-          persons: selectedPerson,
-          passingTime: [],
-        };
-        setRace(newRace);
-        setModalVisible(true);
-      }
+    // if (isConnected) {
+    if (
+      turnuvaName === "" ||
+      selectedParkur === "" ||
+      selectedPerson.length == 0
+    ) {
+      Alert.alert("uyarı", "Lütfen Formdaki Tüm Girdileri Doldurun.");
     } else {
-      Alert.alert("uyarı", "Lütfen önce Bluetooth bağlantısını kurun.");
+      let now = new Date();
+      const myParkur = parkur.filter((item) => item.name === selectedParkur);
+
+      let newRace = {
+        id: uuid.v4(),
+        date: now.toString().slice(4, 21),
+        name: turnuvaName,
+        parkurName: selectedParkur,
+        deviceNum: myParkur[0].number,
+        persons: selectedPerson,
+        passingTime: [],
+      };
+      setRace(newRace);
+      navigation.navigate("TurnuvaList");
+      // setModalVisible(true);
     }
+    // } else {
+    //   Alert.alert("uyarı", "Lütfen önce Bluetooth bağlantısını kurun.");
+    // }
   };
 
   return (
-    <ScreenLayout title="Turnuva Başlat">
+    <ScreenLayout
+      title="Turnuva Oluştur"
+      navigationFunction={() => navigation.goBack()}
+    >
       <View style={styles.container}>
         <View style={styles.inputsContainer}>
           <Input
@@ -112,7 +124,7 @@ const TurnuvaBA = () => {
           }}
         />
       </View>
-      <TurnuvaModal
+      {/* <TurnuvaModal
         modalVisible={modalVisible}
         saveRace={saveRace}
         selectedPerson={selectedPerson}
@@ -120,7 +132,7 @@ const TurnuvaBA = () => {
         setRace={setRace}
         turnuvaName={turnuvaName}
         connectedDevice={connectedDevice}
-      />
+      /> */}
     </ScreenLayout>
   );
 };

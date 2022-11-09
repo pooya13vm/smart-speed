@@ -1,12 +1,31 @@
 import React from "react";
-import { View, Image, Text } from "react-native";
+import { View, Image, Text, TouchableOpacity } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { COLORS } from "../tools/colors";
 import BackGround from "./BackGround";
+import Icon from "react-native-vector-icons/FontAwesome";
 
-const ScreenLayout = ({ children, title }) => {
+const ScreenLayout = ({ children, title, navigationFunction }) => {
   return (
     <BackGround>
+      {title && (
+        <TouchableOpacity
+          style={{
+            position: "absolute",
+            left: 20,
+            top: 20,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: 60,
+          }}
+          onPress={navigationFunction}
+        >
+          <Icon name="angle-left" color="#fefefe" size={22} />
+          <Text style={{ color: "#fefefe", fontSize: 18 }}>Geri</Text>
+        </TouchableOpacity>
+      )}
+
       <LinearGradient
         colors={["#fefefe", "#D7D7D6"]}
         style={{

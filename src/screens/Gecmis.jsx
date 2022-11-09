@@ -9,6 +9,7 @@ import ScreenLayout from "../components/ScreenLayout";
 import DropdownComponent from "../components/Dropdown";
 import { COLORS } from "../tools/colors";
 import { AppContext } from "../context/context";
+import { displayTime } from "../tools/displayTime";
 
 //styled components
 const Container = styled.View`
@@ -67,7 +68,7 @@ const ButtonContainer = styled.TouchableOpacity`
   border-color: ${COLORS.darkBlue};
 `;
 
-const Gecmis = () => {
+const Gecmis = ({ navigation }) => {
   //states
   const [raceData, setRaceData] = useState([]);
   const [selectedRace, setSelectedRace] = useState([]);
@@ -82,7 +83,7 @@ const Gecmis = () => {
       let data = [];
       for (let i = 0; i < allRaces.length; i++) {
         let item = {
-          label: `${allRaces[i].name}   ${allRaces[i].parkur}`,
+          label: `${allRaces[i].name}   ${allRaces[i].parkurName}`,
           value: allRaces[i].id,
         };
         data = [...data, item];
@@ -126,9 +127,12 @@ const Gecmis = () => {
     saveAllRacesToStorage(filtered);
     setSelectedRace([]);
   };
-
+  console.log(listData);
   return (
-    <ScreenLayout title="Geçmiş Turnuvalar">
+    <ScreenLayout
+      title="Geçmiş Turnuvalar"
+      navigationFunction={() => navigation.goBack()}
+    >
       <Container>
         <DDcontainer>
           <DropdownComponent
@@ -144,7 +148,7 @@ const Gecmis = () => {
                 Turnuva Adi : {selectedRace[0].name}
               </TextComponent>
               <TextComponent>
-                Turnuva Parkur : {selectedRace[0].parkur}
+                Turnuva Parkur : {selectedRace[0].parkurName}
               </TextComponent>
               <TextComponent>
                 Turnuva Tarihi : {selectedRace[0].date}
@@ -164,7 +168,9 @@ const Gecmis = () => {
                   renderItem={({ item }) => (
                     <ItemContainer>
                       <TextComponent>{item.name}</TextComponent>
-                      <TextComponent>{item.time}</TextComponent>
+                      <TextComponent>
+                        {displayTime(item.time[item.time.length - 1])}
+                      </TextComponent>
                     </ItemContainer>
                   )}
                 />

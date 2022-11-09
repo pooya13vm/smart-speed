@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, Alert, StyleSheet } from "react-native";
+import { Alert } from "react-native";
 import { Input } from "@rneui/base";
 import uuid from "react-native-uuid";
+import styled from "styled-components";
 
 //components
 import ScreenLayout from "../components/ScreenLayout";
@@ -11,6 +12,21 @@ import { COLORS } from "../tools/colors";
 import DropdownComponent from "../components/Dropdown";
 import MultiSelectComponent from "../components/MultiSelectDD";
 
+//styled components
+const Container = styled.View`
+  width: 100%;
+  justify-content: space-between;
+  height: 75%;
+  align-items: center;
+`;
+const InputContainer = styled.View`
+  width: 90%;
+  margin-top: 20px;
+`;
+const DropdownContainer = styled.View`
+  padding-horizontal: 10px;
+`;
+
 const TurnuvaBA = ({ navigation }) => {
   //states
   const [turnuvaName, setTurnuvaName] = useState("");
@@ -19,15 +35,7 @@ const TurnuvaBA = ({ navigation }) => {
   const [parkurDData, SetParkurDData] = useState([]);
   const [personsData, setPersonsData] = useState([]);
   //context
-  const {
-    parkur,
-    persons,
-    saveRace,
-    setRace,
-    isConnected,
-    connectedDevice,
-    race,
-  } = useContext(AppContext);
+  const { parkur, persons, setRace } = useContext(AppContext);
 
   useEffect(() => {
     if (parkur.length > 0) {
@@ -72,7 +80,6 @@ const TurnuvaBA = ({ navigation }) => {
       };
       setRace(newRace);
       navigation.navigate("TurnuvaList");
-      // setModalVisible(true);
     }
     // } else {
     //   Alert.alert("uyarı", "Lütfen önce Bluetooth bağlantısını kurun.");
@@ -84,12 +91,19 @@ const TurnuvaBA = ({ navigation }) => {
       title="Turnuva Oluştur"
       navigationFunction={() => navigation.goBack()}
     >
-      <View style={styles.container}>
-        <View style={styles.inputsContainer}>
+      <Container>
+        <InputContainer>
           <Input
             value={turnuvaName}
             label="Turnuva Adı : *"
-            style={styles.input}
+            style={{
+              backgroundColor: "transparent",
+              borderColor: COLORS.darkBlue,
+              borderWidth: 1,
+              width: "100%",
+              borderRadius: 10,
+              paddingHorizontal: 16,
+            }}
             inputContainerStyle={{
               borderBottomWidth: 0,
             }}
@@ -104,7 +118,7 @@ const TurnuvaBA = ({ navigation }) => {
             }}
             onChangeText={(val) => setTurnuvaName(val)}
           />
-          <View style={styles.DDContainer}>
+          <DropdownContainer>
             <DropdownComponent
               data={parkurDData}
               onChangeSet={setSelectedParkur}
@@ -115,49 +129,17 @@ const TurnuvaBA = ({ navigation }) => {
               selectedItems={setSelectedPerson}
               placeholder="Katilimcilar Seç"
             />
-          </View>
-        </View>
+          </DropdownContainer>
+        </InputContainer>
         <CircleButton
           title="Başlat"
           onPressFunction={() => {
             newRaceHandler();
           }}
         />
-      </View>
-      {/* <TurnuvaModal
-        modalVisible={modalVisible}
-        saveRace={saveRace}
-        selectedPerson={selectedPerson}
-        setModalVisible={setModalVisible}
-        setRace={setRace}
-        turnuvaName={turnuvaName}
-        connectedDevice={connectedDevice}
-      /> */}
+      </Container>
     </ScreenLayout>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    justifyContent: "space-between",
-    height: "75%",
-    alignItems: "center",
-  },
-  inputsContainer: {
-    width: "90%",
-    marginTop: 20,
-  },
-  input: {
-    backgroundColor: "transparent",
-    borderColor: COLORS.darkBlue,
-    borderWidth: 1,
-    width: "100%",
-    borderRadius: 10,
-    paddingHorizontal: 16,
-  },
-  DDContainer: {
-    paddingHorizontal: 10,
-  },
-});
 
 export default TurnuvaBA;

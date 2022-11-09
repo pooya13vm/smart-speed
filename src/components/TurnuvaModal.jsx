@@ -1,14 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { FlatList, Modal, View, Text, TouchableOpacity } from "react-native";
+import { Modal, View, Text, TouchableOpacity } from "react-native";
 // import styled from "styled-components";
-import { Button } from "@rneui/base";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { COLORS } from "../tools/colors";
 import base64 from "react-native-base64";
 import { BleManager } from "react-native-ble-plx";
+
+//personal component
+import { COLORS } from "../tools/colors";
 import CircleButton from "./CircleButton";
 import { displayTime } from "../tools/displayTime";
-import Lottie from "lottie-react-native";
+import RectangleButton from "./RectangleButton";
+import TurnuvaTimeFlatList from "./TurnuvaTimeFlatList";
 
 const BLTManager = new BleManager();
 
@@ -24,9 +25,6 @@ const TurnuvaModal = ({ visibility, setVisibility, item, setRace, race }) => {
   const [isReset, setReset] = useState(false);
   const timer = useRef(null);
 
-  // console.log(item);
-  // console.log(race);
-
   useEffect(() => {
     let myArray = [];
     for (let i = 0; i < +race.deviceNum; i++) {
@@ -34,8 +32,8 @@ const TurnuvaModal = ({ visibility, setVisibility, item, setRace, race }) => {
     }
     setDevices(myArray);
   }, [isReset]);
-  // console.log(devices);
 
+  //handlers
   const start = useCallback(() => {
     if (!isRunning && !isFinished) {
       console.log("in start ...");
@@ -50,6 +48,7 @@ const TurnuvaModal = ({ visibility, setVisibility, item, setRace, race }) => {
     }
     setIsRunning((pre) => !pre);
   }, [isRunning]);
+
   const HandleMiddleTime = useCallback(
     (num) => {
       setMessage((pre) => pre + 1); //for test
@@ -124,7 +123,7 @@ const TurnuvaModal = ({ visibility, setVisibility, item, setRace, race }) => {
           style={{
             width: "100%",
             height: "100%",
-            backgroundColor: "rgba(23, 54, 68, 0.5)",
+            backgroundColor: "rgba(23, 54, 68, 0.9)",
             alignSelf: "center",
             alignItems: "center",
           }}
@@ -188,69 +187,7 @@ const TurnuvaModal = ({ visibility, setVisibility, item, setRace, race }) => {
                 {displayTime(time)}
               </Text>
             </View>
-
-            <FlatList
-              style={{
-                marginBottom: 30,
-                borderBottomWidth: 2,
-                borderBottomColor: COLORS.darkBlue,
-                width: "90%",
-                paddingTop: 30,
-                paddingBottom: 10,
-                borderBottomWidth: 0,
-              }}
-              contentContainerStyle={{
-                alignItems: "center",
-                width: "90%",
-                alignSelf: "center",
-                position: "relative",
-                // paddingVertical: 30,
-              }}
-              data={devices}
-              keyExtractor={(item) => item.key}
-              renderItem={({ item, index }) => (
-                <View
-                  style={{
-                    width: "50%",
-                    alignItems: "center",
-                    justifyContent: "space-around",
-                    flexDirection: "row",
-                    marginVertical: 10,
-                  }}
-                >
-                  {displayTime(item) === "00:00:00" ? (
-                    <>
-                      <Icon
-                        name="traffic-cone"
-                        color={COLORS.darkBlue}
-                        size={20}
-                      />
-                      <Text style={{ fontSize: 20, color: COLORS.darkBlue }}>
-                        {displayTime(item)}
-                      </Text>
-                    </>
-                  ) : (
-                    <>
-                      <View
-                        style={{
-                          width: 20,
-                          height: 20,
-                          alignItems: "center",
-                        }}
-                      >
-                        <Lottie
-                          style={{ flex: 1 }}
-                          source={require("../assets/images/94242-flag-with-sparkle.json")}
-                          autoPlay
-                          loop={false}
-                        />
-                      </View>
-                      <Text style={{ fontSize: 18 }}>{displayTime(item)}</Text>
-                    </>
-                  )}
-                </View>
-              )}
-            />
+            <TurnuvaTimeFlatList devices={devices} />
             {!isFinished ? (
               <View style={{ marginBottom: 40 }}>
                 <CircleButton title="Başlat" onPressFunction={setChange} />
@@ -262,35 +199,11 @@ const TurnuvaModal = ({ visibility, setVisibility, item, setRace, race }) => {
                   width: "90%",
                   justifyContent: "space-around",
                   alignItems: "center",
-                  marginBottom: 30,
+                  marginBottom: 40,
                 }}
               >
-                <Button
-                  title="Yeniden"
-                  type="outline"
-                  color={COLORS.darkBlue}
-                  buttonStyle={{
-                    borderWidth: 1,
-                    borderColor: COLORS.darkBlue,
-                    width: 100,
-                    borderRadius: 10,
-                  }}
-                  titleStyle={{ color: COLORS.darkBlue }}
-                  onPress={resetHandler}
-                />
-                <Button
-                  title="Kurtar"
-                  type="outline"
-                  color={COLORS.darkBlue}
-                  buttonStyle={{
-                    borderWidth: 1,
-                    borderColor: COLORS.darkBlue,
-                    width: 100,
-                    borderRadius: 10,
-                  }}
-                  titleStyle={{ color: COLORS.darkBlue }}
-                  onPress={saveTimesToList}
-                />
+                <RectangleButton title="Yeniden" onPress={resetHandler} />
+                <RectangleButton title="Kurtar" onPress={saveTimesToList} />
               </View>
             )}
           </View>

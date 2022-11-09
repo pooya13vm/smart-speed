@@ -1,15 +1,31 @@
 import React, { useEffect, useState, useContext } from "react";
-import TurnuvaModal from "../components/TurnuvaModal";
-import ScreenLayout from "../components/ScreenLayout";
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
-import { Button } from "@rneui/base";
-import { COLORS } from "../tools/colors";
+import { FlatList } from "react-native";
 import uuid from "react-native-uuid";
 import Icon from "react-native-vector-icons/FontAwesome";
 import styled from "styled-components";
+
+//personal components
+import ScreenLayout from "../components/ScreenLayout";
+import TurnuvaModal from "../components/TurnuvaModal";
+import { COLORS } from "../tools/colors";
 import { AppContext } from "../context/context";
 import { displayTime } from "../tools/displayTime";
+import RectangleButton from "../components/RectangleButton";
 
+//styled components
+const ListTitleContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  width: 90%;
+  border-bottom-width: 2px;
+  padding-horizontal: 10px;
+  margin-top: 30px;
+`;
+const ListTitleText = styled.Text`
+  font-size: 18px;
+  font-weight: bold;
+  color: ${COLORS.darkBlue};
+`;
 const ListItemContainer = styled.View`
   flex-direction: row;
   width: 100%;
@@ -19,7 +35,7 @@ const ListItemContainer = styled.View`
   justify-content: space-between;
 `;
 const ListItemText = styled.Text`
-  font-size: 16;
+  font-size: 16px;
   color: ${COLORS.darkBlue};
   text-align: center;
 `;
@@ -34,13 +50,28 @@ const ItemTimeText = styled(ListItemText)`
   width: 20%;
   margin-right: 25px;
 `;
+const IconContainer = styled.TouchableOpacity`
+  width: 20%;
+  margin-right: 25px;
+  align-items: center;
+  border-radius: 50px;
+  padding-vertical: 5px;
+`;
+const ButtonsContainer = styled.View`
+  flex-direction: row;
+  width: 90%;
+  align-self: center;
+  justify-content: space-around;
+  margin-bottom: 30px;
+`;
 
 const TurnuvaList = ({ navigation }) => {
-  const { saveRace, setRace, race } = useContext(AppContext);
-  console.log("race : ", race);
+  //states
   const [modalVisible, setModalVisible] = useState(false);
   const [personsData, setPersonsData] = useState([]);
   const [item, setItem] = useState();
+  //context
+  const { saveRace, setRace, race } = useContext(AppContext);
 
   useEffect(() => {
     if (race.name) {
@@ -57,39 +88,18 @@ const TurnuvaList = ({ navigation }) => {
     }
   }, [race]);
 
-  console.log("personData :", race);
-
   return (
     <ScreenLayout
       title={`${race.name} Turnuva Başlat`}
       navigationFunction={() => navigation.goBack()}
     >
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          width: "90%",
-          borderBottomWidth: 2,
-          paddingHorizontal: 10,
-          marginTop: 30,
-        }}
-      >
-        <Text
-          style={{ fontSize: 18, fontWeight: "bold", color: COLORS.darkBlue }}
-        >
-          Sira
-        </Text>
-        <Text
-          style={{ fontSize: 18, fontWeight: "bold", color: COLORS.darkBlue }}
-        >
-          Katilimci
-        </Text>
-        <Text
-          style={{ fontSize: 18, fontWeight: "bold", color: COLORS.darkBlue }}
-        >
+      <ListTitleContainer>
+        <ListTitleText>Sira</ListTitleText>
+        <ListTitleText>Katilimci</ListTitleText>
+        <ListTitleText>
           {race.passingTime.length == 0 ? "Başlat" : "Sure"}
-        </Text>
-      </View>
+        </ListTitleText>
+      </ListTitleContainer>
       <FlatList
         style={{
           marginBottom: 30,
@@ -107,66 +117,33 @@ const TurnuvaList = ({ navigation }) => {
                 {displayTime(item.passingTime[item.passingTime.length - 1])}
               </ItemTimeText>
             ) : (
-              <TouchableOpacity
+              <IconContainer
                 onPress={() => {
                   setItem(item);
                   setModalVisible(true);
                 }}
-                style={{
-                  width: "20%",
-                  marginRight: 25,
-                  alignItems: "center",
-                  // borderWidth: 1,
-                  borderRadius: 50,
-                  paddingVertical: 5,
-                }}
               >
                 <Icon name="play" size={16} color={COLORS.darkBlue} />
-              </TouchableOpacity>
+              </IconContainer>
             )}
           </ListItemContainer>
         )}
       />
-      <View
-        style={{
-          flexDirection: "row",
-          width: "90%",
-          alignSelf: "center",
-          justifyContent: "space-around",
-          marginBottom: 30,
-        }}
-      >
-        <Button
+      <ButtonsContainer>
+        <RectangleButton
           title="Iptal"
           onPress={() => {
-            // setRace({});
             navigation.navigate("Home");
           }}
-          type="outline"
-          containerStyle={{
-            width: 120,
-            borderWidth: 1,
-            borderColor: COLORS.darkBlue,
-            borderRadius: 10,
-          }}
-          titleStyle={{ color: COLORS.darkBlue }}
         />
-        <Button
+        <RectangleButton
           title="Bitiş"
-          type="outline"
-          containerStyle={{
-            width: 120,
-            borderWidth: 1,
-            borderColor: COLORS.darkBlue,
-            borderRadius: 10,
-          }}
-          titleStyle={{ color: COLORS.darkBlue }}
           onPress={() => {
             saveRace();
             navigation.navigate("Home");
           }}
         />
-      </View>
+      </ButtonsContainer>
       <TurnuvaModal
         visibility={modalVisible}
         setVisibility={setModalVisible}

@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Modal, View, Text, TouchableOpacity } from "react-native";
-// import styled from "styled-components";
-import base64 from "react-native-base64";
-import { BleManager } from "react-native-ble-plx";
+import { Modal } from "react-native";
+import styled from "styled-components";
 
 //personal component
 import { COLORS } from "../tools/colors";
@@ -11,12 +9,71 @@ import { displayTime } from "../tools/displayTime";
 import RectangleButton from "./RectangleButton";
 import TurnuvaTimeFlatList from "./TurnuvaTimeFlatList";
 
-const BLTManager = new BleManager();
+//styled components
+const ModalBackground = styled.View`
+  width: 100%;
+  height: 100%;
+  background-color: rgba(23, 54, 68, 0.9);
+  align-self: center;
+  align-items: center;
+`;
+const ModalContainer = styled.View`
+  width: 90%;
+  height: 90%;
+  background-color: #fefefe;
+  margin-top: 10%;
+  border-radius: 20px;
+  align-self: center;
+  align-items: center;
+`;
+const CloseBtnContainer = styled.TouchableOpacity`
+  padding-vertical: 6px;
+  padding-horizontal: 10px;
+  background-color: #f4f4f4;
+  border-radius: 100px;
+  position: absolute;
+  right: 5px;
+  top: 2px;
+`;
+const CloseBtnText = styled.Text`
+  color: ${COLORS.darkBlue};
+`;
+const Title = styled.Text`
+  font-size: 26px;
+  color: ${COLORS.darkBlue};
+  margin-vertical: 20px;
+  padding-horizontal: 20px;
+  font-weight: bold;
+`;
+const TimerContainer = styled.View`
+  width: 200px;
+  height: 200px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${COLORS.darkBlue};
+  border-radius: 120px;
+`;
+const TimerText = styled.Text`
+  font-size: 28px;
+  color: #fefefe;
+`;
+const ButtonContainer = styled.View`
+  flex-direction: row;
+  width: 90%;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 40px;
+`;
 
-const BOX_UUID = "f27b53ad-c63d-49a0-8c0f-9f297e6cc520";
-const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
-
-const TurnuvaModal = ({ visibility, setVisibility, item, setRace, race }) => {
+const TurnuvaModal = ({
+  visibility,
+  setVisibility,
+  item,
+  setRace,
+  race,
+  sendBoxValue,
+  messageBLE,
+}) => {
   const [devices, setDevices] = useState([]);
   const [isRunning, setIsRunning] = useState(false);
   const [isFinished, setFinished] = useState(false);
@@ -49,33 +106,30 @@ const TurnuvaModal = ({ visibility, setVisibility, item, setRace, race }) => {
     setIsRunning((pre) => !pre);
   }, [isRunning]);
 
-  const HandleMiddleTime = useCallback(
-    (num) => {
-      setMessage((pre) => pre + 1); //for test
-      // console.log("m : ", message);
-      // if (num < +race.deviceNum) {
-      if (+message < +race.deviceNum) {
-        if (isRunning) {
-          const copy = [...devices];
-          // copy[num] = time;
-          copy[message] = time;
-          setDevices(copy);
-          // if (num === +race.deviceNum - 1) {
-          if (+message === +race.deviceNum - 1) {
-            console.log("in else....");
-            setFinished(true);
-            start();
-          }
+  const HandleMiddleTime = useCallback(() => {
+    setMessage((pre) => pre + 1); //for test
+    // console.log("m : ", message);
+    // if (num < +race.deviceNum) {
+    if (+message < +race.deviceNum) {
+      if (isRunning) {
+        const copy = [...devices];
+        // copy[num] = time;
+        copy[message] = time;
+        setDevices(copy);
+        // if (num === +race.deviceNum - 1) {
+        if (+message === +race.deviceNum - 1) {
+          console.log("in else....");
+          setFinished(true);
+          start();
         }
-      } else {
-        console.log("in else....");
-        setFinished(true);
-        start();
       }
-      console.log(devices);
-    },
-    [isRunning, time]
-  );
+    } else {
+      console.log("in else....");
+      setFinished(true);
+      start();
+    }
+    console.log(devices);
+  }, [isRunning, time, messageBLE]);
 
   const setChange = () => {
     if (message == "b") {
@@ -83,6 +137,8 @@ const TurnuvaModal = ({ visibility, setVisibility, item, setRace, race }) => {
     } else {
       HandleMiddleTime(+message);
     }
+    // sendBoxValue(devices.length);
+    // start();
   };
   const resetHandler = () => {
     if (isFinished) {
@@ -113,120 +169,37 @@ const TurnuvaModal = ({ visibility, setVisibility, item, setRace, race }) => {
   };
   if (item) {
     return (
-      <Modal
-        animationType="slide"
-        visible={visibility}
-        transparent={true}
-        style={{ backgroundColor: "red", opacity: "" }}
-      >
-        <View
-          style={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(23, 54, 68, 0.9)",
-            alignSelf: "center",
-            alignItems: "center",
-          }}
-        >
-          <View
-            style={{
-              width: "90%",
-              height: "90%",
-              backgroundColor: "#fefefe",
-              marginTop: "10%",
-              borderRadius: 20,
-              alignSelf: "center",
-              alignItems: "center",
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                paddingVertical: 6,
-                paddingHorizontal: 10,
-                backgroundColor: "#f4f4f4",
-                borderRadius: 100,
-                position: "absolute",
-                right: 5,
-                top: 2,
-              }}
+      <Modal animationType="slide" visible={visibility} transparent={true}>
+        <ModalBackground>
+          <ModalContainer>
+            <CloseBtnContainer
               onPress={() => {
                 resetHandler();
                 setVisibility(false);
               }}
             >
-              <Text
-                style={{
-                  color: COLORS.darkBlue,
-                }}
-              >
-                X
-              </Text>
-            </TouchableOpacity>
-            <Text
-              style={{
-                fontSize: 26,
-                color: COLORS.darkBlue,
-                marginVertical: 20,
-                paddingHorizontal: 20,
-                fontWeight: "bold",
-              }}
-            >
-              {item.name}
-            </Text>
-            <View
-              style={{
-                width: 200,
-                height: 200,
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: COLORS.darkBlue,
-                borderRadius: 120,
-              }}
-            >
-              <Text style={{ fontSize: 28, color: "#fefefe" }}>
-                {displayTime(time)}
-              </Text>
-            </View>
+              <CloseBtnText>X</CloseBtnText>
+            </CloseBtnContainer>
+            <Title>{item.name}</Title>
+            <TimerContainer>
+              <TimerText>{displayTime(time)}</TimerText>
+            </TimerContainer>
             <TurnuvaTimeFlatList devices={devices} />
             {!isFinished ? (
-              <View style={{ marginBottom: 40 }}>
+              <ButtonContainer>
                 <CircleButton title="Başlat" onPressFunction={setChange} />
-              </View>
+              </ButtonContainer>
             ) : (
-              <View
-                style={{
-                  flexDirection: "row",
-                  width: "90%",
-                  justifyContent: "space-around",
-                  alignItems: "center",
-                  marginBottom: 40,
-                }}
-              >
+              <ButtonContainer>
                 <RectangleButton title="Yeniden" onPress={resetHandler} />
                 <RectangleButton title="Kurtar" onPress={saveTimesToList} />
-              </View>
+              </ButtonContainer>
             )}
-          </View>
-        </View>
+          </ModalContainer>
+        </ModalBackground>
       </Modal>
     );
   }
 };
 
 export default TurnuvaModal;
-// useEffect(() => {
-//   const sendBoxValue = async () => {
-//     BLTManager.writeCharacteristicWithResponseForDevice(
-//       connectedDevice.id,
-//       SERVICE_UUID,
-//       BOX_UUID,
-//       base64.encode(selectedPerson.length.toString())
-//     ).then((characteristic) => {
-//       console.log(
-//         "Boxvalue changed to :",
-//         base64.decode(characteristic.value)
-//       );
-//     });
-//   };
-//   sendBoxValue();
-// }, [selectedPerson]);

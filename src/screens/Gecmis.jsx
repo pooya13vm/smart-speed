@@ -127,7 +127,7 @@ const Gecmis = ({ navigation }) => {
     saveAllRacesToStorage(filtered);
     setSelectedRace([]);
   };
-  console.log(listData);
+
   return (
     <ScreenLayout
       title="Geçmiş Turnuvalar"

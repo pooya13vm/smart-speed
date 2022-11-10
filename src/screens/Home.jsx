@@ -3,29 +3,19 @@ import styled from "styled-components";
 import { AppContext } from "../context/context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { BleManager } from "react-native-ble-plx";
-import base64 from "react-native-base64";
 import Lottie from "lottie-react-native";
-import {
-  LogBox,
-  Animated,
-  Modal,
-  TouchableOpacity,
-  View,
-  Alert,
-} from "react-native";
-
-LogBox.ignoreLogs(["new NativeEventEmitter"]); // Ignore log notification by message
-LogBox.ignoreAllLogs(); //Ignore all log notifications
+import { LogBox, Animated, Modal, View, Alert } from "react-native";
 
 //components
 import ScreenLayout from "../components/ScreenLayout";
 import { COLORS } from "../tools/colors";
 import { getPermission } from "../tools/getPermittion";
+import { BluetoothContext } from "../context/bluetooth";
+import RectangleButton from "../components/RectangleButton";
 
+LogBox.ignoreLogs(["new NativeEventEmitter"]); // Ignore log notification by message
+LogBox.ignoreAllLogs(); //Ignore all log notifications
 const BLTManager = new BleManager();
-const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
-const MESSAGE_UUID = "6d68efe5-04b6-4a85-abc4-c2670b7bf7fd";
-const BOX_UUID = "f27b53ad-c63d-49a0-8c0f-9f297e6cc520";
 
 const ButtonsContainer = styled.View`
   width: 80%;
@@ -81,22 +71,16 @@ const AnimationTitle = styled.Text`
 const Home = ({ navigation }) => {
   //states
   const [isAllowed, setAllowed] = useState(false);
-  const [isScanning, setScanning] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [message, setMessage] = useState();
-  const [boxvalue, setBoxValue] = useState();
-
   //context
+  const { contact, saveToStorage } = useContext(AppContext);
   const {
-    contact,
-    saveToStorage,
-    chargeData,
-    setChargeData,
+    setScanning,
+    scanDevices,
+    disconnectBluetooth,
+    isScanning,
     isConnected,
-    setIsConnected,
-    connectedDevice,
-    setConnectedDevice,
-  } = useContext(AppContext);
+  } = useContext(BluetoothContext);
 
   const progress = useRef(new Animated.Value(0)).current;
 
@@ -126,14 +110,6 @@ const Home = ({ navigation }) => {
     getPermission().then((result) => setAllowed(result));
     saveToStorage(contact);
   }, [progress, isConnected]);
-  useEffect(() => {
-    if (message) {
-      if (chargeData.indexOf(message) === -1) {
-        setChargeData([message, ...chargeData]);
-        console.log("new data...");
-      }
-    }
-  }, [message]);
 
   //handlers
   const connectingToDevice = () => {
@@ -148,113 +124,6 @@ const Home = ({ navigation }) => {
     }
   };
 
-  const scanDevices = async () => {
-    BLTManager.startDeviceScan(null, null, (error, scannedDevice) => {
-      if (error) {
-        console.warn(error);
-      }
-      if (scannedDevice && scannedDevice.name == "BLEExample") {
-        BLTManager.stopDeviceScan();
-        connectDevice(scannedDevice);
-        setScanning(false);
-      }
-    });
-    setTimeout(() => {
-      BLTManager.stopDeviceScan();
-      setScanning(false);
-    }, 5000);
-  };
-
-  const connectDevice = async (device) => {
-    console.log("connecting to Device:", device.name);
-    device
-      .connect()
-      .then((device) => {
-        setConnectedDevice(device);
-        setIsConnected(true);
-        return device.discoverAllServicesAndCharacteristics();
-      })
-      .then((device) => {
-        //  Set what to do when DC is detected
-        BLTManager.onDeviceDisconnected(device.id, (error, device) => {
-          console.log("Device DC");
-          setIsConnected(false);
-        });
-        //Read  values
-        //Message
-        device
-          .readCharacteristicForService(SERVICE_UUID, MESSAGE_UUID)
-          .then((val) => {
-            setMessage(base64.decode(val.value));
-          });
-        //BoxValue
-        device
-          .readCharacteristicForService(SERVICE_UUID, BOX_UUID)
-          .then((val) => {
-            setBoxValue(StringToBool(base64.decode(val.value)));
-          });
-
-        //monitor values and tell what to do when receiving an update
-
-        //Message
-        device.monitorCharacteristicForService(
-          SERVICE_UUID,
-          MESSAGE_UUID,
-          (error, characteristic) => {
-            if (characteristic.value != null) {
-              setMessage(base64.decode(characteristic.value));
-              console.log(
-                "Message update received: ",
-                base64.decode(characteristic.value)
-              );
-            }
-          },
-          "messagetransaction"
-        );
-        //BoxValue
-        // device.monitorCharacteristicForService(
-        //   SERVICE_UUID,
-        //   BOX_UUID,
-        //   (error, characteristic) => {
-        //     if (characteristic.value != null) {
-        //       setBoxValue(StringToBool(base64.decode(characteristic.value)));
-        //       setChargeData([
-        //         StringToBool(base64.decode(characteristic.value)),
-        //         ...chargeData,
-        //       ]);
-        //       console.log(
-        //         "Box Value update received: ",
-        //         base64.decode(characteristic.value)
-        //       );
-        //     }
-        //   },
-        //   "boxtransaction"
-        // );
-        // console.log("Connection established");
-      });
-  };
-
-  // handle the device disconnection (poorly)
-  const disconnectBluetooth = async () => {
-    console.log("Disconnecting start");
-    if (connectedDevice != null) {
-      const isDeviceConnected = await connectedDevice.isConnected();
-      if (isDeviceConnected) {
-        BLTManager.cancelTransaction("messagetransaction");
-        BLTManager.cancelTransaction("nightmodetransaction");
-
-        BLTManager.cancelDeviceConnection(connectedDevice.id).then(() =>
-          console.log("DC completed")
-        );
-      }
-
-      const connectionStatus = await connectedDevice.isConnected();
-      if (!connectionStatus) {
-        setIsConnected(false);
-        setModalVisible(false);
-      }
-    }
-  };
   const animationStyle = {
     width: 8,
     height: 8,
@@ -266,7 +135,7 @@ const Home = ({ navigation }) => {
     opacity: progress,
     transform: [{ scale: progress }],
   };
-  console.log(chargeData);
+
   return (
     <ScreenLayout>
       <ButtonsContainer>
@@ -345,37 +214,18 @@ const Home = ({ navigation }) => {
             }}
           >
             {isConnected && !isScanning && (
-              <TouchableOpacity
-                onPress={disconnectBluetooth}
-                style={{
-                  width: "40%",
-                  height: 40,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  alignSelf: "center",
-                  borderWidth: 1,
-                  borderRadius: 10,
-                  borderColor: COLORS.darkBlue,
+              <RectangleButton
+                onPress={() => {
+                  modalVisible(false);
+                  disconnectBluetooth;
                 }}
-              >
-                <AnimationTitle>Bağlantıyı Kes</AnimationTitle>
-              </TouchableOpacity>
+                title="Bağlantıyı Kes"
+              />
             )}
-            <TouchableOpacity
+            <RectangleButton
               onPress={() => setModalVisible(false)}
-              style={{
-                width: "40%",
-                height: 40,
-                justifyContent: "center",
-                alignItems: "center",
-                alignSelf: "center",
-                borderWidth: 1,
-                borderRadius: 10,
-                borderColor: COLORS.darkBlue,
-              }}
-            >
-              <AnimationTitle>Tamam</AnimationTitle>
-            </TouchableOpacity>
+              title="Tamam"
+            />
           </View>
         </ModalContainer>
       </Modal>
@@ -384,3 +234,131 @@ const Home = ({ navigation }) => {
 };
 
 export default Home;
+
+//from app context :
+// chargeData,
+// setChargeData,
+// isConnected,
+// setIsConnected,
+// connectedDevice,
+// setConnectedDevice,
+
+// const [message, setMessage] = useState(); //*
+// const [boxvalue, setBoxValue] = useState(); //*
+// const [isScanning, setScanning] = useState(false); //*
+
+// const scanDevices = async () => {
+//   BLTManager.startDeviceScan(null, null, (error, scannedDevice) => {
+//     if (error) {
+//       console.warn(error);
+//     }
+//     if (scannedDevice && scannedDevice.name == "BLEExample") {
+//       BLTManager.stopDeviceScan();
+//       connectDevice(scannedDevice);
+//       setScanning(false);
+//     }
+//   });
+//   setTimeout(() => {
+//     BLTManager.stopDeviceScan();
+//     setScanning(false);
+//   }, 5000);
+// };
+
+// const connectDevice = async (device) => {
+//   console.log("connecting to Device:", device.name);
+//   device
+//     .connect()
+//     .then((device) => {
+//       setConnectedDevice(device);
+//       setIsConnected(true);
+//       return device.discoverAllServicesAndCharacteristics();
+//     })
+//     .then((device) => {
+//       //  Set what to do when DC is detected
+//       BLTManager.onDeviceDisconnected(device.id, (error, device) => {
+//         console.log("Device DC");
+//         setIsConnected(false);
+//       });
+//       //Read  values
+//       //Message
+//       device
+//         .readCharacteristicForService(SERVICE_UUID, MESSAGE_UUID)
+//         .then((val) => {
+//           setMessage(base64.decode(val.value));
+//         });
+//       //BoxValue
+//       device
+//         .readCharacteristicForService(SERVICE_UUID, BOX_UUID)
+//         .then((val) => {
+//           setBoxValue(StringToBool(base64.decode(val.value)));
+//         });
+
+//       //monitor values and tell what to do when receiving an update
+
+//       //Message
+//       device.monitorCharacteristicForService(
+//         SERVICE_UUID,
+//         MESSAGE_UUID,
+//         (error, characteristic) => {
+//           if (characteristic.value != null) {
+//             setMessage(base64.decode(characteristic.value));
+//             console.log(
+//               "Message update received: ",
+//               base64.decode(characteristic.value)
+//             );
+//           }
+//         },
+//         "messagetransaction"
+//       );
+//       //BoxValue
+//       // device.monitorCharacteristicForService(
+//       //   SERVICE_UUID,
+//       //   BOX_UUID,
+//       //   (error, characteristic) => {
+//       //     if (characteristic.value != null) {
+//       //       setBoxValue(StringToBool(base64.decode(characteristic.value)));
+//       //       setChargeData([
+//       //         StringToBool(base64.decode(characteristic.value)),
+//       //         ...chargeData,
+//       //       ]);
+//       //       console.log(
+//       //         "Box Value update received: ",
+//       //         base64.decode(characteristic.value)
+//       //       );
+//       //     }
+//       //   },
+//       //   "boxtransaction"
+//       // );
+//       // console.log("Connection established");
+//     });
+// };
+
+// handle the device disconnection (poorly)
+// const disconnectBluetooth = async () => {
+//   console.log("Disconnecting start");
+//   if (connectedDevice != null) {
+//     const isDeviceConnected = await connectedDevice.isConnected();
+//     if (isDeviceConnected) {
+//       BLTManager.cancelTransaction("messagetransaction");
+//       BLTManager.cancelTransaction("nightmodetransaction");
+
+//       BLTManager.cancelDeviceConnection(connectedDevice.id).then(() =>
+//         console.log("DC completed")
+//       );
+//     }
+
+//     const connectionStatus = await connectedDevice.isConnected();
+//     if (!connectionStatus) {
+//       setIsConnected(false);
+//       setModalVisible(false);
+//     }
+//   }
+// };
+// useEffect(() => {
+//   if (message) {
+//     if (chargeData.indexOf(message) === -1) {
+//       setChargeData([message, ...chargeData]);
+//       console.log("new data...");
+//     }
+//   }
+// }, [message]);

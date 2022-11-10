@@ -4,13 +4,8 @@ import { View, Text, FlatList } from "react-native";
 import { COLORS } from "../tools/colors";
 import Icon from "react-native-vector-icons/FontAwesome";
 import uuid from "react-native-uuid";
-import { AppContext } from "../context/context";
+import { BluetoothContext } from "../context/bluetooth";
 
-const data = [
-  { name: "cihaz-1", percentage: 10 },
-  { name: "cihaz-2", percentage: 60 },
-  { name: "cihaz-3", percentage: 90 },
-];
 const batteryName = (percentage) => {
   if (percentage < 10) {
     return "battery-0";
@@ -31,7 +26,7 @@ const batteryName = (percentage) => {
 
 const Sarj = ({ navigation }) => {
   //context
-  const { chargeData } = useContext(AppContext);
+  const { chargeData } = useContext(BluetoothContext);
 
   //states
   const [isData, SetIsData] = useState(false);
@@ -50,12 +45,10 @@ const Sarj = ({ navigation }) => {
             percentage: Number(charge),
             id: uuid.v4(),
           };
-          // console.log("device:", device);
           devicesArray.push(device);
         }
         return devicesArray;
       };
-      // console.log("set list return : ", setItem());
       setList(setItem()._3);
       SetIsData(true);
     }

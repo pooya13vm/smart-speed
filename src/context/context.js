@@ -9,9 +9,6 @@ export const AppProvider = ({ children }) => {
   const [persons, setPersons] = useState([]);
   const [race, setRace] = useState({});
   const [allRaces, setAllRaces] = useState([]);
-  const [chargeData, setChargeData] = useState([]);
-  const [isConnected, setIsConnected] = useState(false);
-  const [connectedDevice, setConnectedDevice] = useState();
 
   const checkStorage = async () => {
     try {
@@ -83,7 +80,6 @@ export const AppProvider = ({ children }) => {
   return (
     <AppContext.Provider
       value={{
-        // getPermission,
         race,
         setContact,
         contact,
@@ -98,12 +94,6 @@ export const AppProvider = ({ children }) => {
         allRaces,
         setAllRaces,
         saveAllRacesToStorage,
-        chargeData,
-        setChargeData,
-        isConnected,
-        setIsConnected,
-        connectedDevice,
-        setConnectedDevice,
       }}
     >
       {children}

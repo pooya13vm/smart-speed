@@ -19,6 +19,7 @@ const ListTitleContainer = styled.View`
   justify-content: space-between;
   width: 90%;
   border-bottom-width: 2px;
+  border-bottom-color: ${COLORS.darkBlue};
   padding-horizontal: 10px;
   margin-top: 30px;
 `;

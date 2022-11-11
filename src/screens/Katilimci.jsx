@@ -54,7 +54,7 @@ const ButtonTitle = styled.Text`
 `;
 const ListContainer = styled.View`
   width: 98%;
-  height: 50%;
+  height: 47%;
   border-width: 2px;
   border-radius: 30px;
   border-color: ${COLORS.darkBlue};

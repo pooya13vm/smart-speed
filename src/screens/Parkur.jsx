@@ -52,7 +52,7 @@ const AddBtnTitle = styled.Text`
 `;
 const ListContainer = styled.View`
   width: 98%;
-  height: 52%;
+  height: 50%;
   border-width: 2px;
   border-radius: 30px;
   border-color: ${COLORS.darkBlue};
@@ -174,6 +174,7 @@ const Parkur = ({ navigation }) => {
           containerStyle={{
             width: 120,
             alignItems: "center",
+            borderColor: COLORS.darkBlue,
           }}
           keyboardType="number-pad"
           inputStyle={{

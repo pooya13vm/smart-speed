@@ -23,7 +23,7 @@ const DropdownComponent = ({ data, onChangeSet, placeholder }) => {
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 10,
-        borderEndColor: COLORS.darkBlue,
+        borderColor: COLORS.darkBlue,
         height: 40,
       }}
       containerStyle={{
@@ -38,7 +38,7 @@ const DropdownComponent = ({ data, onChangeSet, placeholder }) => {
       search={false}
       maxHeight={300}
       placeholderStyle={{ fontSize: 16, color: COLORS.darkGreen }}
-      selectedTextStyle={{ fontSize: 18, color: COLORS.darkGreen }}
+      selectedTextStyle={{ fontSize: 16, color: COLORS.darkGreen }}
       showsVerticalScrollIndicator={true}
       renderItem={renderItem}
       onFocus={() => setIsFocus(true)}

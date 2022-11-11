@@ -28,7 +28,7 @@ const DataContainer = styled.View`
   height: 85%;
   width: 100%;
   padding-horizontal: 15px;
-  justify-content: space-between;
+  justify-content: space-around;
 `;
 const DataTopContainer = styled.View`
   margin-left: 10px;
@@ -39,7 +39,7 @@ const TextComponent = styled.Text`
 `;
 const TimeAndIconCon = styled.View`
   flex-direction: row;
-  width: 100;
+  width: 100px;
   justify-content: space-between;
 `;
 const ListTitleContainer = styled.View`
@@ -227,18 +227,30 @@ const Gecmis = ({ navigation }) => {
                     style={{ flex: 1 }}
                     source={require("../assets/images/lf30_editor_e33eotje.json")}
                     autoPlay
-                    loop
+                    loop={false}
                   />
                   <AnimationTitle>lütfen bekleyin</AnimationTitle>
                 </AnimationContainer>
               )}
             </DataTopContainer>
             {!loading && (
-              <ButtonContainer
-                onPress={() => deleteHandler(selectedRace[0].id)}
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-evenly",
+                }}
               >
-                <Icon name="trash" size={24} color={COLORS.darkBlue} />
-              </ButtonContainer>
+                <ButtonContainer
+                  onPress={() => deleteHandler(selectedRace[0].id)}
+                >
+                  <Icon name="trash" size={24} color={COLORS.darkBlue} />
+                </ButtonContainer>
+                <ButtonContainer
+                // onPress={() => deleteHandler(selectedRace[0].id)}
+                >
+                  <Icon name="share-alt" size={24} color={COLORS.darkBlue} />
+                </ButtonContainer>
+              </View>
             )}
           </DataContainer>
         )}
@@ -292,6 +304,7 @@ const Gecmis = ({ navigation }) => {
               <FlatList
                 contentContainerStyle={{
                   alignItems: "center",
+                  paddingBottom: 10,
                 }}
                 data={selectedItem.time}
                 renderItem={({ item, index }) => {

@@ -9,6 +9,7 @@ const RectangleButton = ({ title, onPress }) => {
         title={title}
         onPress={onPress}
         type="outline"
+        buttonStyle={{ borderWidth: 0 }}
         containerStyle={{
           width: 120,
           borderWidth: 1,

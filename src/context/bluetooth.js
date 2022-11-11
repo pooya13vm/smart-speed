@@ -155,6 +155,7 @@ export const BluetoothProvider = ({ children }) => {
         isConnected,
         sendBoxValue,
         messageBLE,
+        chargeData,
       }}
     >
       {children}

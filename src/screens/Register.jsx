@@ -8,6 +8,7 @@ import { AppContext } from "../context/context";
 import BackGround from "../components/BackGround";
 //personal tools
 import { COLORS } from "../tools/colors";
+import CircleButton from "../components/CircleButton";
 
 const inputsStyle = {
   backgroundColor: "transparent",
@@ -49,7 +50,7 @@ const Register = ({ navigation }) => {
             style={{
               backgroundColor: "#fefefe",
               height: "75%",
-              width: "80%",
+              width: "90%",
               alignSelf: "center",
               marginTop: "35%",
               borderRadius: 30,
@@ -66,9 +67,9 @@ const Register = ({ navigation }) => {
                 borderRadius: 70,
               }}
             />
-            <ScrollView style={{ width: "100%" }}>
+            <ScrollView style={{ width: "90%" }}>
               <Input
-                label="Ad ve soyad : "
+                label="Cihazın seri numarası : "
                 style={inputsStyle}
                 inputStyle={{
                   color: COLORS.darkGreen,
@@ -76,8 +77,25 @@ const Register = ({ navigation }) => {
                 inputContainerStyle={{
                   borderBottomWidth: 0,
                 }}
+                containerStyle={{ height: 90 }}
                 labelStyle={{ marginBottom: 10, color: COLORS.darkBlue }}
                 onChangeText={(val) => setName(val)}
+              />
+              <Input
+                label="Spor kompleksinin adı :"
+                style={inputsStyle}
+                inputContainerStyle={{
+                  borderBottomWidth: 0,
+                }}
+                containerStyle={{ height: 90 }}
+                inputStyle={{
+                  color: COLORS.darkGreen,
+                }}
+                labelStyle={{
+                  marginBottom: 10,
+                  color: COLORS.darkBlue,
+                }}
+                onChangeText={(val) => setAlias(val)}
               />
               <Input
                 label="Kullanıcı adı : *"
@@ -166,63 +184,13 @@ const Register = ({ navigation }) => {
                   alignItems: "center",
                   // marginTop: 20,
                 }}
-              >
-                <Input
-                  label="Ağırlık"
-                  containerStyle={{
-                    width: 120,
-                    alignItems: "center",
-                  }}
-                  keyboardType="number-pad"
-                  inputStyle={{
-                    color: COLORS.darkGreen,
-                    textAlign: "center",
-                  }}
-                  labelStyle={{
-                    color: COLORS.darkBlue,
-                    marginBottom: 5,
-                  }}
-                  inputContainerStyle={{
-                    borderBottomWidth: 0,
-                  }}
-                  style={{ borderWidth: 1, borderRadius: 10 }}
-                  placeholder="Kg"
-                />
-
-                <Input
-                  label="Yükseklik"
-                  containerStyle={{ width: 120, alignItems: "center" }}
-                  keyboardType="number-pad"
-                  inputStyle={{
-                    color: COLORS.darkGreen,
-                    textAlign: "center",
-                  }}
-                  labelStyle={{
-                    color: COLORS.darkBlue,
-                    marginBottom: 5,
-                  }}
-                  inputContainerStyle={{
-                    borderBottomWidth: 0,
-                  }}
-                  style={{ borderWidth: 1, borderRadius: 10 }}
-                  placeholder="Cm"
+              ></View>
+              <View style={{ alignItems: "center", justifyContent: "center" }}>
+                <CircleButton
+                  title="üye Ol"
+                  onPressFunction={() => saveContact()}
                 />
               </View>
-              <Button
-                title="üye Ol"
-                type="outline"
-                buttonStyle={{
-                  alignSelf: "center",
-                  marginTop: "5%",
-                  borderColor: COLORS.darkBlue,
-                  borderWidth: 2,
-                  borderRadius: 180,
-                  width: 80,
-                  padding: 25,
-                }}
-                titleStyle={{ color: COLORS.darkBlue, fontSize: 18 }}
-                onPress={() => saveContact()}
-              />
             </ScrollView>
           </View>
         </BackGround>

@@ -162,19 +162,20 @@ const Parkur = ({ navigation }) => {
           containerStyle={{
             margin: 0,
             padding: 0,
-            maxHeight: 80,
+            maxHeight: 72,
           }}
           onChangeText={(val) => setParkurName(val)}
         />
       </NameInputContainer>
       <InputsContainer>
         <Input
-          label="Cihaz Sayısı"
+          // label="Cihaz Sayısı"
+          placeholder="Cihaz Sayısı"
+          placeholderTextColor={COLORS.darkGreen}
           value={number}
           containerStyle={{
             width: 120,
             alignItems: "center",
-            borderColor: COLORS.darkBlue,
           }}
           keyboardType="number-pad"
           inputStyle={{
@@ -189,7 +190,13 @@ const Parkur = ({ navigation }) => {
           inputContainerStyle={{
             borderBottomWidth: 0,
           }}
-          style={{ borderWidth: 1, borderRadius: 10 }}
+          style={{
+            borderWidth: 1,
+            borderRadius: 10,
+            borderColor: COLORS.darkBlue,
+            fontSize: 16,
+            marginTop: 26,
+          }}
           onChangeText={(val) => setNumber(val)}
         />
         <DropdownContainer>

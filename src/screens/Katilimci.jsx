@@ -85,9 +85,10 @@ const ListItemText = styled.Text`
 `;
 const DeleteButton = styled.TouchableOpacity`
   border-width: 0.5px;
-  padding-vertical: 5px;
-  padding-horizontal: 6px;
+  padding-vertical: 6px;
+  padding-horizontal: 8px;
   border-radius: 50px;
+  border-color: ${COLORS.darkBlue};
 `;
 
 const Katilimci = ({ navigation }) => {

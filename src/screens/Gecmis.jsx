@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { FlatList, Modal, Animated } from "react-native";
+import { FlatList, Modal, Animated, Alert } from "react-native";
 import Lottie from "lottie-react-native";
 import styled from "styled-components";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -11,7 +11,7 @@ import { COLORS } from "../tools/colors";
 import { AppContext } from "../context/context";
 import { displayTime } from "../tools/displayTime";
 import CircleButton from "../components/CircleButton";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, Share } from "react-native";
 
 //styled components
 const Container = styled.View`
@@ -36,6 +36,9 @@ const DataTopContainer = styled.View`
 const TextComponent = styled.Text`
   font-size: 16px;
   color: ${COLORS.darkBlue};
+`;
+const ListTitle = styled(TextComponent)`
+  font-weight: bold;
 `;
 const TimeAndIconCon = styled.View`
   flex-direction: row;
@@ -70,10 +73,12 @@ const ButtonContainer = styled.TouchableOpacity`
   align-self: center;
   border-radius: 80px;
   border-width: 2px;
-  padding-horizontal: 15px;
+  padding-horizontal: 14px;
   padding-vertical: 12px;
   border-color: ${COLORS.darkBlue};
 `;
+
+//Modal styles components
 const ModalBackground = styled.View`
   width: 100%;
   height: 100%;
@@ -90,6 +95,39 @@ const ModalContainer = styled.View`
   border-radius: 20px;
   align-self: center;
   align-items: center;
+`;
+const ModalAnimationContainer = styled.View`
+  width: 200px;
+  height: 200px;
+  align-items: center;
+`;
+const ModalTitle = styled.Text`
+  font-size: 24px;
+  font-weight: bold;
+  color: ${COLORS.darkBlue};
+`;
+const ModalFirstItemContainer = styled.View`
+  flex-direction: row;
+  width: 60%;
+  justify-content: space-around;
+  align-items: center;
+  margin-vertical: 5px;
+`;
+const ModalFirstItemText = styled.Text`
+  font-size: 16px;
+  margin-vertical: 5px;
+  color: ${COLORS.darkBlue};
+`;
+const ModalListItemContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-around;
+  width: 70%;
+  margin-vertical: 15px;
+`;
+const ModalItemText = styled.Text`
+  font-size: 20px;
+  color: ${(props) => (!props.isEnd ? COLORS.darkBlue : COLORS.lightGreen)};
+  font-weight: ${(props) => (props.isEnd ? "bold" : "400")};
 `;
 
 const Gecmis = ({ navigation }) => {
@@ -159,6 +197,40 @@ const Gecmis = ({ navigation }) => {
   const handleShowDetail = (item) => {
     setSelectedItem(item);
   };
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        title: "hi",
+        message: `Turnuva Adi : << *${selectedRace[0].name}*  >>
+        Turnuva Parkur : ${selectedRace[0].parkurName}
+        Turnuva Tarihi : ${selectedRace[0].date}
+        ${shareTextHandler()}`,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          Alert.alert("Hata kodu 4532E");
+        } else {
+          Alert.alert("Hata kodu 4533E");
+        }
+      } else if (result.action === Share.dismissedAction) {
+        Alert.alert("Hata kodu 4535E");
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+  const shareTextHandler = () => {
+    let text = "";
+    if (listData.length > 0) {
+      listData.map((item) => {
+        let personDetail = `${item.name} ${displayTime(
+          item.time[item.time.length - 1]
+        )}`;
+        text = `${text} \n ${personDetail} `;
+      });
+    }
+    return text;
+  };
 
   return (
     <ScreenLayout
@@ -186,8 +258,8 @@ const Gecmis = ({ navigation }) => {
                 Turnuva Tarihi : {selectedRace[0].date}
               </TextComponent>
               <ListTitleContainer>
-                <TextComponent>Katiliciler</TextComponent>
-                <TextComponent>Sure</TextComponent>
+                <ListTitle>Katiliciler</ListTitle>
+                <ListTitle>Sure</ListTitle>
               </ListTitleContainer>
               {!loading ? (
                 <FlatList
@@ -245,9 +317,7 @@ const Gecmis = ({ navigation }) => {
                 >
                   <Icon name="trash" size={24} color={COLORS.darkBlue} />
                 </ButtonContainer>
-                <ButtonContainer
-                // onPress={() => deleteHandler(selectedRace[0].id)}
-                >
+                <ButtonContainer onPress={onShare}>
                   <Icon name="share-alt" size={24} color={COLORS.darkBlue} />
                 </ButtonContainer>
               </View>
@@ -257,13 +327,7 @@ const Gecmis = ({ navigation }) => {
         <Modal visible={showDetail} animationType="fade" transparent={true}>
           <ModalBackground>
             <ModalContainer>
-              <View
-                style={{
-                  width: 200,
-                  height: 200,
-                  alignItems: "center",
-                }}
-              >
+              <ModalAnimationContainer>
                 <Lottie
                   progress={progress}
                   style={{ flex: 1 }}
@@ -271,36 +335,12 @@ const Gecmis = ({ navigation }) => {
                   autoPlay
                   source={require("../assets/images/lf30_editor_rcr7wshw.json")}
                 />
-              </View>
-              <Text
-                style={{
-                  fontSize: 24,
-                  fontWeight: "bold",
-                  color: COLORS.darkBlue,
-                }}
-              >
-                {selectedItem.name}
-              </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  width: "60%",
-                  justifyContent: "space-around",
-                  alignItems: "center",
-                  marginVertical: 5,
-                }}
-              >
+              </ModalAnimationContainer>
+              <ModalTitle>{selectedItem.name}</ModalTitle>
+              <ModalFirstItemContainer>
                 <Icon name="flag-o" color={COLORS.darkBlue} size={22} />
-                <Text
-                  style={{
-                    fontSize: 16,
-                    marginVertical: 5,
-                    color: COLORS.darkBlue,
-                  }}
-                >
-                  Başlangıç ​​Noktası
-                </Text>
-              </View>
+                <ModalFirstItemText>Başlangıç ​​Noktası</ModalFirstItemText>
+              </ModalFirstItemContainer>
               <FlatList
                 contentContainerStyle={{
                   alignItems: "center",
@@ -310,30 +350,16 @@ const Gecmis = ({ navigation }) => {
                 renderItem={({ item, index }) => {
                   const isEnd = index === selectedItem.time.length - 1;
                   return (
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-around",
-                        width: "70%",
-                        marginVertical: 15,
-                      }}
-                    >
-                      {console.log(item)}
+                    <ModalListItemContainer>
                       <Icon
                         name={!isEnd ? "flag" : "flag-checkered"}
                         size={22}
                         color={COLORS.darkBlue}
                       />
-                      <Text
-                        style={{
-                          fontSize: 20,
-                          color: !isEnd ? COLORS.darkBlue : COLORS.lightGreen,
-                          fontWeight: isEnd ? "bold" : null,
-                        }}
-                      >
+                      <ModalItemText isEnd={isEnd}>
                         {displayTime(item)}
-                      </Text>
-                    </View>
+                      </ModalItemText>
+                    </ModalListItemContainer>
                   );
                 }}
               />

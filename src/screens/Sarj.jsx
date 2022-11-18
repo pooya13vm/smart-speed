@@ -25,12 +25,23 @@ const batteryName = (percentage) => {
 };
 
 const Sarj = ({ navigation }) => {
-  //context
-  const { chargeData } = useContext(BluetoothContext);
-
   //states
   const [isData, SetIsData] = useState(false);
   const [list, setList] = useState([]);
+  const [chargeData, setChargeData] = useState([]);
+
+  //context
+  const { chargeMessage } = useContext(BluetoothContext);
+
+  useEffect(() => {
+    if (chargeMessage.includes(":")) {
+      if (chargeData.indexOf(chargeMessage) === -1) {
+        setChargeData([chargeMessage, ...chargeData]);
+        console.log("new data...");
+      }
+    }
+  }, [chargeMessage]);
+  // console.log("message on sarj: ", chargeMessage);
 
   useEffect(() => {
     if (chargeData.length > 0) {

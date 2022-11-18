@@ -12,6 +12,7 @@ import TurnuvaBA from "../screens/TurnuvaBA";
 import Gecmis from "../screens/Gecmis";
 import Sarj from "../screens/Sarj";
 import TurnuvaList from "../screens/TurnuvaList";
+import SecondBLE from "../screens/SecondBLE";
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ const AppNavigation = () => {
           headerShown: false,
         }}
       >
+        {/* <Stack.Screen name="Blutooth" component={SecondBLE} /> */}
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="TurnuvaList" component={TurnuvaList} />

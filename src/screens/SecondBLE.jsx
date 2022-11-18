@@ -1,19 +1,12 @@
 import React, { useState } from "react";
-import {
-  TouchableOpacity,
-  Button,
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-} from "react-native";
+import { TouchableOpacity, Button, View, Text } from "react-native";
 
 import base64 from "react-native-base64";
 
-// import CheckBox from "@react-native-community/checkbox";
-import { CheckBox } from "@rneui/themed";
+import CheckBox from "@react-native-community/checkbox";
 
 import { BleManager } from "react-native-ble-plx";
+
 import { LogBox } from "react-native";
 
 LogBox.ignoreLogs(["new NativeEventEmitter"]); // Ignore log notification by message
@@ -41,8 +34,8 @@ function BoolToString(input) {
     return "0";
   }
 }
-/// start ///----------------------------------------------------------->>>>>>
-export default function SecondBLE() {
+
+export default function App() {
   //Is a device connected?
   const [isConnected, setIsConnected] = useState(false);
 
@@ -51,11 +44,11 @@ export default function SecondBLE() {
 
   const [message, setMessage] = useState("Nothing Yet");
   const [boxvalue, setBoxValue] = useState(false);
-  const [inputValue, setInputValue] = useState("");
 
   // Scans availbale BLT Devices and then call connectDevice
   async function scanDevices() {
     BLTManager.startDeviceScan(null, null, (error, scannedDevice) => {
+      console.log("start ...");
       if (error) {
         console.warn(error);
       }
@@ -128,15 +121,15 @@ export default function SecondBLE() {
         //Message
         device
           .readCharacteristicForService(SERVICE_UUID, MESSAGE_UUID)
-          .then((val) => {
-            setMessage(base64.decode(val.value));
+          .then((valenc) => {
+            setMessage(base64.decode(valenc.value));
           });
 
         //BoxValue
         device
           .readCharacteristicForService(SERVICE_UUID, BOX_UUID)
-          .then((val) => {
-            setBoxValue(StringToBool(base64.decode(val.value)));
+          .then((valenc) => {
+            setBoxValue(StringToBool(base64.decode(valenc.value)));
           });
 
         //monitor values and tell what to do when receiving an update
@@ -182,14 +175,14 @@ export default function SecondBLE() {
       <View style={{ paddingBottom: 200 }}></View>
 
       {/* Title */}
-      <View style={styles.rowView}>
-        <Text style={styles.titleText}>BLE Example</Text>
+      <View>
+        <Text>BLE Example</Text>
       </View>
 
       <View style={{ paddingBottom: 20 }}></View>
 
       {/* Connect Button */}
-      <View style={styles.rowView}>
+      <View>
         <TouchableOpacity style={{ width: 120 }}>
           {!isConnected ? (
             <Button
@@ -215,49 +208,23 @@ export default function SecondBLE() {
 
       {/* Monitored Value */}
 
-      <View style={styles.rowView}>
-        <Text style={styles.baseText}>{message}</Text>
+      <View>
+        <Text>{message}</Text>
       </View>
 
       <View style={{ paddingBottom: 20 }}></View>
 
       {/* Checkbox */}
-      <View style={styles.rowView}>
+      <View>
         <CheckBox
           disabled={false}
-          checked={boxvalue}
-          onPress={() => {
-            setBoxValue(!boxvalue);
-            sendBoxValue("pooya");
+          value={boxvalue}
+          onValueChange={(newValue) => {
+            // setBoxValue(newValue);
+            sendBoxValue(BoolToString(newValue));
           }}
         />
-        <TextInput
-          onChangeText={(val) => setInputValue(val)}
-          style={{
-            width: "50%",
-            backgroundColor: "white",
-            fontSize: 16,
-            height: 40,
-          }}
-        />
-        <Button title="send" onPress={() => sendBoxValue(inputValue)} />
       </View>
     </View>
   );
 }
-const styles = StyleSheet.create({
-  baseText: {
-    fontSize: 15,
-    fontFamily: "Cochin",
-  },
-  titleText: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  rowView: {
-    justifyContent: "space-around",
-    alignItems: "flex-start",
-    flexDirection: "row",
-    padding: 10,
-  },
-});

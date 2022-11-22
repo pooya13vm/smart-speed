@@ -337,10 +337,10 @@ const Gecmis = ({ navigation }) => {
                 />
               </ModalAnimationContainer>
               <ModalTitle>{selectedItem.name}</ModalTitle>
-              <ModalFirstItemContainer>
+              {/* <ModalFirstItemContainer>
                 <Icon name="flag-o" color={COLORS.darkBlue} size={22} />
                 <ModalFirstItemText>Başlangıç ​​Noktası</ModalFirstItemText>
-              </ModalFirstItemContainer>
+              </ModalFirstItemContainer> */}
               <FlatList
                 contentContainerStyle={{
                   alignItems: "center",

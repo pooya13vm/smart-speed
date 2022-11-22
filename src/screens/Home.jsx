@@ -145,31 +145,20 @@ const Home = ({ navigation }) => {
         return device.discoverAllServicesAndCharacteristics();
       })
       .then((device) => {
-        //  Set what to do when DC is detected
         BLTManager.onDeviceDisconnected(device.id, (error, device) => {
           console.log("Device DC");
           setIsConnected(false);
         });
-
-        //Read inital values
-
-        //Message
         device
           .readCharacteristicForService(SERVICE_UUID, MESSAGE_UUID)
           .then((val) => {
             setMessage(base64.decode(val.value));
           });
-
-        //BoxValue
         device
           .readCharacteristicForService(SERVICE_UUID, BOX_UUID)
           .then((value) => {
             setBoxValue(base64.decode(value.value));
           });
-
-        //monitor values and tell what to do when receiving an update
-
-        //Message
         device.monitorCharacteristicForService(
           SERVICE_UUID,
           MESSAGE_UUID,
@@ -193,7 +182,6 @@ const Home = ({ navigation }) => {
           "messagetransaction"
         );
 
-        //BoxValue
         device.monitorCharacteristicForService(
           SERVICE_UUID,
           BOX_UUID,
@@ -233,7 +221,6 @@ const Home = ({ navigation }) => {
       }
     }
   }
-  // console.log("box value :", boxValue);
   async function sendBoxValue(value) {
     console.log("in sending value : ", connectedDevice.id);
     BLTManager.writeCharacteristicWithResponseForDevice(
@@ -323,6 +310,3 @@ const Home = ({ navigation }) => {
 };
 
 export default Home;
-
-// 5:r/t
-//b - 0 -1-2-3

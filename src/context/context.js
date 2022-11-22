@@ -9,6 +9,8 @@ export const AppProvider = ({ children }) => {
   const [persons, setPersons] = useState([]);
   const [race, setRace] = useState({});
   const [allRaces, setAllRaces] = useState([]);
+  const [chargeMessage, setChargeMessage] = useState([]);
+  const [message, setMessage] = useState(null);
 
   const checkStorage = async () => {
     try {
@@ -70,6 +72,7 @@ export const AppProvider = ({ children }) => {
       console.log(error);
     }
   };
+  // console.log(parkur);
   const saveRace = () => {
     if (race.name) {
       setAllRaces([...allRaces, race]);
@@ -77,26 +80,29 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  return (
-    <AppContext.Provider
-      value={{
-        race,
-        setContact,
-        contact,
-        checkStorage,
-        saveToStorage,
-        parkur,
-        setParkur,
-        persons,
-        setPersons,
-        setRace,
-        saveRace,
-        allRaces,
-        setAllRaces,
-        saveAllRacesToStorage,
-      }}
-    >
-      {children}
-    </AppContext.Provider>
+  const ctx = React.useMemo(
+    () => ({
+      race,
+      setContact,
+      contact,
+      checkStorage,
+      saveToStorage,
+      parkur,
+      setParkur,
+      persons,
+      setPersons,
+      setRace,
+      saveRace,
+      allRaces,
+      setAllRaces,
+      saveAllRacesToStorage,
+      setChargeMessage,
+      chargeMessage,
+      message,
+      setMessage,
+    }),
+    [race, contact, parkur, persons, allRaces, chargeMessage, message]
   );
+
+  return <AppContext.Provider value={ctx}>{children}</AppContext.Provider>;
 };

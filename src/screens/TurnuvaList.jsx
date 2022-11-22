@@ -11,7 +11,7 @@ import { COLORS } from "../tools/colors";
 import { AppContext } from "../context/context";
 import { displayTime } from "../tools/displayTime";
 import RectangleButton from "../components/RectangleButton";
-import { BluetoothContext } from "../context/bluetooth";
+// import { BluetoothContext } from "../context/bluetooth";
 
 //styled components
 const ListTitleContainer = styled.View`
@@ -73,8 +73,8 @@ const TurnuvaList = ({ navigation }) => {
   const [personsData, setPersonsData] = useState([]);
   const [item, setItem] = useState();
   //context
-  const { saveRace, setRace, race } = useContext(AppContext);
-  const { sendBoxValue, messageBLE } = useContext(BluetoothContext);
+  const { saveRace, setRace, race, message, setMessage } =
+    useContext(AppContext);
 
   useEffect(() => {
     if (race.name) {
@@ -89,7 +89,9 @@ const TurnuvaList = ({ navigation }) => {
       }
       setPersonsData(data);
     }
+    setMessage(null);
   }, [race]);
+  // console.log("in list :", message);
 
   return (
     <ScreenLayout
@@ -153,8 +155,8 @@ const TurnuvaList = ({ navigation }) => {
         item={item}
         race={race}
         setRace={setRace}
-        sendBoxValue={sendBoxValue}
-        messageBLE={messageBLE}
+        messageBLE={message}
+        setMessageBLE={setMessage}
       />
     </ScreenLayout>
   );

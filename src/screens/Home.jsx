@@ -4,19 +4,20 @@ import { AppContext } from "../context/context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { BleManager } from "react-native-ble-plx";
 import base64 from "react-native-base64";
-import Lottie from "lottie-react-native";
-import { LogBox, Animated, Modal, View, Alert } from "react-native";
+import { LogBox, Animated, Alert } from "react-native";
 
 //components
 import ScreenLayout from "../components/ScreenLayout";
 import { COLORS } from "../tools/colors";
 import { getPermission } from "../tools/getPermittion";
-import { BluetoothContext } from "../context/bluetooth";
-import RectangleButton from "../components/RectangleButton";
+import BLConnectionModal from "../components/BLConnectionModal";
+import TurnuvaOLModal from "../components/TurnuvaOLModal";
+
+const BLTManager = new BleManager();
 
 LogBox.ignoreLogs(["new NativeEventEmitter"]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
-const BLTManager = new BleManager();
+
 const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
 const MESSAGE_UUID = "6d68efe5-04b6-4a85-abc4-c2670b7bf7fd";
 const BOX_UUID = "f27b53ad-c63d-49a0-8c0f-9f297e6cc520";
@@ -49,42 +50,27 @@ const ButtonText = styled.Text`
   font-weight: bold;
   text-align: center;
 `;
-const ModalContainer = styled.View`
-  width: 90%;
-  height: 70%;
-  background-color: white;
-  align-self: center;
-  margin-top: 50%;
-  border-radius: 20px;
-  align-items: center;
-`;
-const AnimationContainer = styled.View`
-  width: 100%;
-  height: 85%;
-  padding: 30px;
-  align-items: center;
-  justify-content: space-between;
-`;
-const AnimationTitle = styled.Text`
-  color: ${COLORS.darkBlue};
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
-`;
 
 const Home = ({ navigation }) => {
   //states
   const [isAllowed, setAllowed] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [message, setMessage] = useState();
   const [boxValue, setBoxValue] = useState();
   const [isScanning, setScanning] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [connectedDevice, setConnectedDevice] = useState();
+  const [TUmodalVisible, setTUmodalVisible] = useState(false);
 
   //context
-  const { contact, saveToStorage } = useContext(AppContext);
-  const { setChargeMessage } = useContext(BluetoothContext);
+  const {
+    contact,
+    saveToStorage,
+    setChargeMessage,
+    setMessage,
+    parkur,
+    persons,
+    setRace,
+  } = useContext(AppContext);
 
   const progress = useRef(new Animated.Value(0)).current;
 
@@ -113,7 +99,7 @@ const Home = ({ navigation }) => {
     });
     getPermission().then((result) => setAllowed(result));
     saveToStorage(contact);
-  }, [progress, isConnected]);
+  }, [progress, isConnected, connectedDevice]);
 
   //handlers
   const connectingToDevice = () => {
@@ -122,7 +108,6 @@ const Home = ({ navigation }) => {
       if (!isConnected) {
         setScanning(true);
         scanDevices();
-        // .then((val) => console.log("val:....", val));
       }
     } else {
       return Alert.alert("Lütfen ayarlarda Bluetooth erişimine izin verin");
@@ -190,12 +175,19 @@ const Home = ({ navigation }) => {
           MESSAGE_UUID,
           (error, characteristic) => {
             if (characteristic.value != null) {
-              setMessage(base64.decode(characteristic.value));
-              setChargeMessage(base64.decode(characteristic.value));
-              console.log(
-                "Message update received: ",
-                base64.decode(characteristic.value)
-              );
+              if (base64.decode(characteristic.value).includes(":")) {
+                setChargeMessage(base64.decode(characteristic.value));
+                console.log(
+                  "Message charge: ",
+                  base64.decode(characteristic.value)
+                );
+              } else {
+                console.log(
+                  "Message turnuva: ",
+                  base64.decode(characteristic.value)
+                );
+                setMessage(base64.decode(characteristic.value));
+              }
             }
           },
           "messagetransaction"
@@ -241,8 +233,7 @@ const Home = ({ navigation }) => {
       }
     }
   }
-  // console.log("box value : ", boxValue);
-  //Function to send data to ESP32
+  // console.log("box value :", boxValue);
   async function sendBoxValue(value) {
     console.log("in sending value : ", connectedDevice.id);
     BLTManager.writeCharacteristicWithResponseForDevice(
@@ -283,7 +274,12 @@ const Home = ({ navigation }) => {
           <Icon name="history" size={24} color={COLORS.darkBlue} />
           <ButtonText>Geçmiş Turnuvalar</ButtonText>
         </Button>
-        <Button onPress={() => navigation.navigate("TurnuvaBA")}>
+        <Button
+          onPress={() =>
+            // navigation.navigate("TurnuvaBA")
+            setTUmodalVisible(true)
+          }
+        >
           <Icon name="flag-checkered" size={24} color={COLORS.darkBlue} />
           <ButtonText>Turnuva Oluştur</ButtonText>
         </Button>
@@ -306,148 +302,27 @@ const Home = ({ navigation }) => {
           <ButtonText>Bağlamak</ButtonText>
         </Button>
       </ButtonsContainer>
-      <Modal animationType="slide" transparent={true} visible={modalVisible}>
-        <ModalContainer>
-          <AnimationContainer>
-            {!isConnected && isScanning && (
-              <>
-                <AnimationTitle>Tarama ...</AnimationTitle>
-                <Lottie
-                  style={{ flex: 1 }}
-                  source={require("../assets/images/lf30_editor_67friqml.json")}
-                  autoPlay
-                  loop
-                />
-              </>
-            )}
-            {isConnected && !isScanning && (
-              <>
-                <AnimationTitle>Bağlı</AnimationTitle>
-                <Lottie
-                  style={{ flex: 1 }}
-                  source={require("../assets/images/lf30_editor_wbmr1ykq.json")}
-                  autoPlay
-                  loop={false}
-                />
-              </>
-            )}
-            {!isConnected && !isScanning && (
-              <>
-                <AnimationTitle>Cihazı Bulamadı</AnimationTitle>
-                <AnimationTitle>
-                  lütfen cihazı kontrol edip tekrar deneyin
-                </AnimationTitle>
-                <Lottie
-                  style={{ flex: 1 }}
-                  source={require("../assets/images/lf30_editor_i9yjhkuv.json")}
-                  autoPlay
-                  loop={false}
-                />
-              </>
-            )}
-          </AnimationContainer>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-evenly",
-              width: "100%",
-              paddingHorizontal: "5%",
-            }}
-          >
-            {isConnected && !isScanning && (
-              <RectangleButton
-                onPress={() => {
-                  setModalVisible(false);
-                  disconnectBluetooth();
-                }}
-                title="Bağlantıyı Kes"
-              />
-            )}
-            <RectangleButton
-              onPress={() => setModalVisible(false)}
-              title="Tamam"
-            />
-          </View>
-        </ModalContainer>
-      </Modal>
+      <TurnuvaOLModal
+        parkur={parkur}
+        persons={persons}
+        setRace={setRace}
+        TUmodalVisible={TUmodalVisible}
+        setTUmodalVisible={setTUmodalVisible}
+        navigation={navigation}
+        sendBoxValue={sendBoxValue}
+      />
+      <BLConnectionModal
+        isConnected={isConnected}
+        modalVisible={modalVisible}
+        isScanning={isScanning}
+        setModalVisible={setModalVisible}
+        disconnectBluetooth={disconnectBluetooth}
+      />
     </ScreenLayout>
   );
 };
 
 export default Home;
-//---------------------------------..>>>>>>>>>>>>>>>>>>>>>C
 
-// async function connectDevice(device) {
-//   console.log("connecting to Device:", device.id);
-
-//   device
-//     .connect()
-//     .then((myDevice) => {
-//       console.log("my device: ", myDevice);
-//       setConnectedDevice(myDevice);
-//       setIsConnected(true);
-//       return myDevice.discoverAllServicesAndCharacteristics();
-//     })
-//     .then((DDdevice) => {
-//       console.log(DDdevice);
-//       BLTManager.onDeviceDisconnected(DDdevice.id, (error, DDdevice) => {
-//         console.log("Device DC");
-//         setIsConnected(false);
-//       });
-
-//       device
-//         .readCharacteristicForService(SERVICE_UUID, MESSAGE_UUID)
-//         .then((val) => {
-//           setMessage(base64.decode(val.value));
-//         });
-
-//       //BoxValue
-//       device
-//         .readCharacteristicForService(SERVICE_UUID, BOX_UUID)
-//         .then((value) => {
-//           setBoxValue(base64.decode(value.value));
-//         });
-
-//       //monitor values and tell what to do when receiving an update
-
-//       //Message
-//       device.monitorCharacteristicForService(
-//         SERVICE_UUID,
-//         MESSAGE_UUID,
-//         (error, characteristic) => {
-//           if (characteristic.value != null) {
-//             if (base64.decode(characteristic.value).includes(":")) {
-//               setChargeMessage(base64.decode(characteristic.value));
-//             } else {
-//               setMessage(base64.decode(characteristic.value));
-//             }
-
-//             // console.log(
-//             //   "Message update received: ",
-//             //   base64.decode(characteristic.value)
-//             // );
-//           }
-//         },
-//         "messagetransaction"
-//       );
-//       //BoxValue
-//       device.monitorCharacteristicForService(
-//         SERVICE_UUID,
-//         BOX_UUID,
-//         (error, characteristic) => {
-//           if (characteristic.value != null) {
-//             setBoxValue(base64.decode(characteristic.value));
-//             console.log(
-//               "Box Value update received: ",
-//               base64.decode(characteristic.value)
-//             );
-//           }
-//         },
-//         "boxtransaction"
-//       );
-
-//       console.log("Connection established");
-//     });
-// }
 // 5:r/t
 //b - 0 -1-2-3

@@ -1,6 +1,7 @@
 const padToTwo = (number) => (number <= 9 ? `0${number}` : number);
 
 export const displayTime = (milSecond) => {
+  if (milSecond === "Başladı") return "Başladı";
   let minutes = 0;
   let seconds = 0;
   if (milSecond < 0) {

@@ -4,7 +4,8 @@ import { View, Text, FlatList } from "react-native";
 import { COLORS } from "../tools/colors";
 import Icon from "react-native-vector-icons/FontAwesome";
 import uuid from "react-native-uuid";
-import { BluetoothContext } from "../context/bluetooth";
+import Lottie from "lottie-react-native";
+import { AppContext } from "../context/context";
 
 const batteryName = (percentage) => {
   if (percentage < 10) {
@@ -31,7 +32,7 @@ const Sarj = ({ navigation }) => {
   const [chargeData, setChargeData] = useState([]);
 
   //context
-  const { chargeMessage } = useContext(BluetoothContext);
+  const { chargeMessage } = useContext(AppContext);
 
   useEffect(() => {
     if (chargeMessage.includes(":")) {
@@ -115,11 +116,16 @@ const Sarj = ({ navigation }) => {
             marginTop: "25%",
             justifyContent: "center",
             alignItems: "center",
+            width: 120,
+            height: 120,
           }}
         >
-          <Text style={{ fontSize: 16, color: COLORS.darkBlue }}>
-            Lütfen önce Bluetooth bağlantısını kurun
-          </Text>
+          <Lottie
+            style={{ flex: 1 }}
+            source={require("../assets/images/98788-loading.json")}
+            autoPlay
+            loop
+          />
         </View>
       )}
     </ScreenLayout>

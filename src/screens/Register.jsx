@@ -101,7 +101,6 @@ const Register = ({ navigation }) => {
       checkStorage();
     }
   }, []);
-  console.log(contact);
   if (!contact.name) {
     return (
       <KeyboardAwareScrollView>

@@ -4,7 +4,6 @@ import styled from "styled-components";
 
 //personal component
 import { COLORS } from "../tools/colors";
-import CircleButton from "./CircleButton";
 import { displayTime } from "../tools/displayTime";
 import RectangleButton from "./RectangleButton";
 import TurnuvaTimeFlatList from "./TurnuvaTimeFlatList";
@@ -71,83 +70,67 @@ const TurnuvaModal = ({
   item,
   setRace,
   race,
-  sendBoxValue,
   messageBLE,
+  setMessageBLE,
 }) => {
   const [devices, setDevices] = useState([]);
   const [isRunning, setIsRunning] = useState(false);
   const [isFinished, setFinished] = useState(false);
   const [time, setTime] = useState(0);
-  const [message, setMessage] = useState("b");
   const [isReset, setReset] = useState(false);
   const timer = useRef(null);
 
   useEffect(() => {
     let myArray = [];
-    for (let i = 0; i < +race.deviceNum; i++) {
+    for (let i = 0; i < +race.deviceNum * 2 - 1; i++) {
       myArray.push(0);
     }
     setDevices(myArray);
-  }, [isReset]);
-
-  //handlers
-  const start = useCallback(() => {
-    if (!isRunning && !isFinished) {
-      console.log("in start ...");
-      setMessage(-1); //just for test it must come from device
-      const interval = setInterval(() => {
-        setTime((previousTime) => previousTime + 1);
-      }, 10);
-      timer.current = interval;
-    } else {
-      console.log("in stop ...");
-      clearInterval(timer.current);
+    if (messageBLE) {
+      start();
     }
-    setIsRunning((pre) => !pre);
-  }, [isRunning]);
+  }, [isReset, messageBLE]);
 
-  const HandleMiddleTime = useCallback(() => {
-    setMessage((pre) => pre + 1); //for test
-    // console.log("m : ", message);
-    // if (num < +race.deviceNum) {
-    if (+message < +race.deviceNum) {
-      if (isRunning) {
+  const start = useCallback(() => {
+    if (messageBLE) {
+      if (messageBLE === "b") {
+        console.log("in start ...");
         const copy = [...devices];
-        // copy[num] = time;
-        copy[message] = time;
+        copy[0] = "Başladı";
         setDevices(copy);
-        // if (num === +race.deviceNum - 1) {
-        if (+message === +race.deviceNum - 1) {
-          console.log("in else....");
-          setFinished(true);
-          start();
+        setIsRunning(true);
+
+        const interval = setInterval(() => {
+          setTime((previousTime) => previousTime + 1);
+        }, 10);
+        timer.current = interval;
+      }
+      if (+messageBLE < +race.deviceNum * 2 - 2) {
+        if (isRunning) {
+          const copy = [...devices];
+          copy[messageBLE] = time;
+          setDevices(copy);
         }
       }
-    } else {
-      console.log("in else....");
-      setFinished(true);
-      start();
+      if (+messageBLE === +race.deviceNum * 2 - 2) {
+        const copy = [...devices];
+        copy[messageBLE] = time;
+        setDevices(copy);
+        setFinished(true);
+        clearInterval(timer.current);
+        // setMessageBLE(null);
+      }
     }
-    console.log(devices);
-  }, [isRunning, time, messageBLE]);
+  }, [time, messageBLE]);
 
-  const setChange = () => {
-    if (message == "b") {
-      start();
-    } else {
-      HandleMiddleTime(+message);
-    }
-    // sendBoxValue(devices.length);
-    // start();
-  };
   const resetHandler = () => {
     if (isFinished) {
       setDevices([]);
       setTime(0);
       setIsRunning(false);
       setFinished(false);
-      setMessage("b");
       setReset(!isReset);
+      setMessageBLE(null);
     }
   };
   const saveTimesToList = () => {
@@ -164,7 +147,7 @@ const TurnuvaModal = ({
     setTime(0);
     setIsRunning(false);
     setFinished(false);
-    setMessage("b");
+    setMessageBLE(null);
     setReset(!isReset);
   };
   if (item) {
@@ -185,11 +168,7 @@ const TurnuvaModal = ({
               <TimerText>{displayTime(time)}</TimerText>
             </TimerContainer>
             <TurnuvaTimeFlatList devices={devices} />
-            {!isFinished ? (
-              <ButtonContainer>
-                <CircleButton title="Başlat" onPressFunction={setChange} />
-              </ButtonContainer>
-            ) : (
+            {isFinished && (
               <ButtonContainer>
                 <RectangleButton title="Yeniden" onPress={resetHandler} />
                 <RectangleButton title="Kurtar" onPress={saveTimesToList} />
@@ -203,3 +182,55 @@ const TurnuvaModal = ({
 };
 
 export default TurnuvaModal;
+
+// useEffect(() => {
+//   if (messageBLE) {
+//     if (messageBLE == "b") {
+//       start();
+//     } else {
+//       HandleMiddleTime(+messageBLE);
+//     }
+//     console.log("in turnuva modal", messageBLE);
+//   }
+// }, [messageBLE]);
+// console.log(devices);
+//handlers
+// const start = useCallback(() => {
+//   if (!isRunning && !isFinished) {
+//     console.log("in start ...");
+//     const copy = [...devices];
+//     copy[0] = "Başladı";
+//     setDevices(copy);
+//     const interval = setInterval(() => {
+//       setTime((previousTime) => previousTime + 1);
+//     }, 10);
+//     timer.current = interval;
+//   } else {
+//     console.log("in stop ...");
+//     clearInterval(timer.current);
+//   }
+//   setIsRunning((pre) => !pre);
+// }, [isRunning]);
+// console.log(devices);
+
+// const HandleMiddleTime = useCallback(
+//   (message) => {
+//     if (+message < +race.deviceNum * 2 - 1) {
+//       if (isRunning) {
+//         const copy = [...devices];
+//         copy[message] = time;
+//         setDevices(copy);
+//         if (+message === +race.deviceNum * 2 - 1) {
+//           console.log("in else....");
+//           setFinished(true);
+//           start();
+//         }
+//       }
+//     } else {
+//       console.log("in else....");
+//       setFinished(true);
+//       start();
+//     }
+//   },
+//   [isRunning, time]
+// );

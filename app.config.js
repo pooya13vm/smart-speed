@@ -12,3 +12,22 @@
 //       },
 //     ],
 //   ];
+// {
+//     "expo": {
+//       "extra": {
+//         "eas": {
+//           "projectId": "d0bc4ba4-e911-4605-aad8-cd7ed27c15ac"
+//         }
+//       }
+//     }
+//   }
+module.exports = {
+  name: "smartSpeed",
+  version: "1.0.0",
+
+  extra: {
+    eas: {
+      projectId: "d0bc4ba4-e911-4605-aad8-cd7ed27c15ac",
+    },
+  },
+};

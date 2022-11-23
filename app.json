@@ -4,6 +4,11 @@
     "slug": "smartSpeed",
     "version": "1.0.0",
     "assetBundlePatterns": ["**/*"],
+    "extra": {
+      "eas": {
+        "projectId": "d0bc4ba4-e911-4605-aad8-cd7ed27c15ac"
+      }
+    },
     "plugins": [
       [
         "@config-plugins/react-native-ble-plx",

@@ -11,7 +11,6 @@ import { COLORS } from "../tools/colors";
 import { AppContext } from "../context/context";
 import { displayTime } from "../tools/displayTime";
 import RectangleButton from "../components/RectangleButton";
-// import { BluetoothContext } from "../context/bluetooth";
 
 //styled components
 const ListTitleContainer = styled.View`

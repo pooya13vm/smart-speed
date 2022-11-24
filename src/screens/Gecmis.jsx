@@ -280,7 +280,9 @@ const Gecmis = ({ navigation }) => {
                         <TextComponent>{item.name}</TextComponent>
                         <TimeAndIconCon>
                           <TextComponent>
-                            {displayTime(item.time[item.time.length - 1])}
+                            {item.time
+                              ? displayTime(item.time[item.time.length - 1])
+                              : "00:00:00"}
                           </TextComponent>
 
                           <Icon

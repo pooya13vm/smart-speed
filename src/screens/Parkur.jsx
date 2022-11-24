@@ -182,11 +182,6 @@ const Parkur = ({ navigation }) => {
             color: COLORS.darkGreen,
             textAlign: "center",
           }}
-          labelStyle={{
-            color: COLORS.darkBlue,
-            marginBottom: 5,
-            fontSize: 15,
-          }}
           inputContainerStyle={{
             borderBottomWidth: 0,
           }}
@@ -194,7 +189,7 @@ const Parkur = ({ navigation }) => {
             borderWidth: 1,
             borderRadius: 10,
             borderColor: COLORS.darkBlue,
-            fontSize: 16,
+            fontSize: 14,
             marginTop: 26,
           }}
           onChangeText={(val) => setNumber(val)}

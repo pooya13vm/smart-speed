@@ -262,10 +262,13 @@ const Home = ({ navigation }) => {
           <ButtonText>Geçmiş Turnuvalar</ButtonText>
         </Button>
         <Button
-          onPress={() =>
-            // navigation.navigate("TurnuvaBA")
-            setTUmodalVisible(true)
-          }
+          onPress={() => {
+            if (isConnected) {
+              setTUmodalVisible(true);
+            } else {
+              Alert.alert("Lütfen önce Bluetooth bağlantısını kurun");
+            }
+          }}
         >
           <Icon name="flag-checkered" size={24} color={COLORS.darkBlue} />
           <ButtonText>Turnuva Oluştur</ButtonText>

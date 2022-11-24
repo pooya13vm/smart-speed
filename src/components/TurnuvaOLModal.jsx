@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Input, Alert } from "@rneui/base";
+import { Input } from "@rneui/base";
 import uuid from "react-native-uuid";
 import styled from "styled-components";
+import { Alert } from "react-native";
 
 //components
 import ScreenLayout from "./ScreenLayout";
@@ -64,7 +65,6 @@ const TurnuvaOLModal = ({
 
   //handlers
   const newRaceHandler = () => {
-    // if (isConnected) {
     if (
       turnuvaName === "" ||
       selectedParkur === "" ||
@@ -89,9 +89,6 @@ const TurnuvaOLModal = ({
       setTUmodalVisible(false);
       navigation.navigate("TurnuvaList");
     }
-    // } else {
-    //   Alert.alert("uyarı", "Lütfen önce Bluetooth bağlantısını kurun.");
-    // }
   };
 
   return (

@@ -99,7 +99,7 @@ const Home = ({ navigation }) => {
       }
     });
     getPermission().then((result) => setAllowed(result));
-    saveToStorage(contact);
+    saveToStorage(contact[0]);
   }, [progress, isConnected, connectedDevice]);
 
   //handlers

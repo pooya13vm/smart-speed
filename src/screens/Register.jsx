@@ -91,20 +91,18 @@ const Register = ({ navigation }) => {
   const { setContact, contact, checkStorage } = useContext(AppContext);
 
   const saveContact = () => {
-    if (name === "" && serialNum === "" && sportGN === "") {
+    if (name === "" || serialNum === "" || sportGN === "") {
       setWarningVisibility(true);
     } else {
       setContact([{ name, serialNum }]);
       navigation.navigate("Home");
     }
   };
-
+  console.log("in register :", contact);
   useEffect(() => {
-    if (!contact.name) {
-      checkStorage();
-    }
+    checkStorage();
   }, []);
-  if (!contact.name) {
+  if (contact.length == 0) {
     return (
       <KeyboardAwareScrollView>
         <BackGround>
@@ -222,7 +220,7 @@ const Register = ({ navigation }) => {
             source={require("../assets/images/Screen_Shot_2022-10-27_at_13.56.36-removebg.png")}
           />
           <SPTitleText>Hoşgeldin</SPTitleText>
-          <SPNameText>{`${contact.name}`}</SPNameText>
+          <SPNameText>{`${contact[0].name}`}</SPNameText>
 
           <Button
             title="Giriş yapmak"

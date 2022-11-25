@@ -16,8 +16,9 @@ export const AppProvider = ({ children }) => {
     try {
       const getST = await AsyncStorage.getItem("@contact");
       const parsST = JSON.parse(getST);
-      if (parsST[0]) {
-        setContact(parsST[0]);
+      console.log("in context check ..", parsST);
+      if (parsST.name) {
+        setContact([parsST]);
         setRegistered(true);
       }
     } catch (error) {
@@ -55,6 +56,8 @@ export const AppProvider = ({ children }) => {
   // AsyncStorage.clear();
 
   const saveToStorage = async (contact) => {
+    console.log("saving to storage ....", contact);
+
     if (!isRegistered) {
       try {
         const stringified = await JSON.stringify(contact);

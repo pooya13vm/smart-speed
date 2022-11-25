@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef, useEffect } from "react";
-import { FlatList, Alert, Animated } from "react-native";
+import { FlatList, Animated } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Input } from "@rneui/base";
 import styled from "styled-components";
@@ -11,6 +11,7 @@ import ScreenLayout from "../components/ScreenLayout";
 import { COLORS } from "../tools/colors";
 import DropdownComponent from "../components/Dropdown";
 import ParkurItem from "../components/ParkurListItem";
+import WarningModal from "../components/WarningModal";
 
 //context
 import { AppContext } from "../context/context";
@@ -82,6 +83,7 @@ const Parkur = ({ navigation }) => {
   const [number, setNumber] = useState("");
   const [tip, setTip] = useState("");
   const [loading, setLoading] = useState(false);
+  const [warningVisibility, setWarningVisibility] = useState(false);
   //context
   const { parkur, setParkur } = useContext(AppContext);
 
@@ -98,7 +100,7 @@ const Parkur = ({ navigation }) => {
   //handlers
   const addItemToList = () => {
     if (parkurName === "" || number === "" || tip === "") {
-      Alert.alert("uyarı", "Lütfen Formdaki Tüm Girdileri Doldurun");
+      setWarningVisibility(true);
     } else {
       setLoading(true);
       const newParkur = { name: parkurName, number, tip, id: uuid.v4() };
@@ -229,6 +231,12 @@ const Parkur = ({ navigation }) => {
           </AnimationContainer>
         )}
       </ListContainer>
+      <WarningModal
+        setWarningVisibility={setWarningVisibility}
+        warningVisibility={warningVisibility}
+        title="Ayy !!!"
+        note="Lütfen Formdaki Tüm Girdileri Doldurun."
+      />
     </ScreenLayout>
   );
 };

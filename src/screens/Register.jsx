@@ -1,8 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Alert } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { Input, CheckBox, Button } from "@rneui/themed";
-import Icon from "react-native-vector-icons/Ionicons";
+import { Input, Button } from "@rneui/themed";
+// import Icon from "react-native-vector-icons/Ionicons";
 import styled from "styled-components";
 
 //personal components
@@ -10,6 +9,7 @@ import BackGround from "../components/BackGround";
 import { AppContext } from "../context/context";
 import { COLORS } from "../tools/colors";
 import CircleButton from "../components/CircleButton";
+import WarningModal from "../components/WarningModal";
 
 //styled components
 const Container = styled.View`
@@ -27,22 +27,24 @@ const ImageComponent = styled.Image`
   margin-top: -60px;
   background-color: #fefefe;
   border-radius: 70px;
+  margin-bottom: 10%;
 `;
 const BodyContainer = styled.ScrollView`
   width: 90%;
 `;
-const SexSelectContainer = styled.View`
-  flex-direction: row;
-  justify-content: space-around;
-`;
-const CheckboxContainer = styled.View`
-  justify-content: center;
-  align-items: center;
-  border-color: gray;
-  padding: 20px;
-  border-radius: 15px;
-`;
+// const SexSelectContainer = styled.View`
+//   flex-direction: row;
+//   justify-content: space-around;
+// `;
+// const CheckboxContainer = styled.View`
+//   justify-content: center;
+//   align-items: center;
+//   border-color: gray;
+//   padding: 20px;
+//   border-radius: 15px;
+// `;
 const ButtonContainer = styled.View`
+  margin-top: 25%;
   align-items: center;
   justify-content: center;
 `;
@@ -82,16 +84,17 @@ const Register = ({ navigation }) => {
   const [name, setName] = useState("");
   const [serialNum, setSerialNum] = useState("");
   const [sportGN, setSportGn] = useState("");
-  const [checkedMan, setCheckedMan] = useState(false);
-  const [checkedWoman, setCheckedWoman] = useState(false);
+  const [warningVisibility, setWarningVisibility] = useState(false);
+  // const [checkedMan, setCheckedMan] = useState(false);
+  // const [checkedWoman, setCheckedWoman] = useState(false);
 
   const { setContact, contact, checkStorage } = useContext(AppContext);
 
   const saveContact = () => {
     if (name === "" && serialNum === "" && sportGN === "") {
-      Alert.alert("Lütfen hep boşluğu doldurun");
+      setWarningVisibility(true);
     } else {
-      setContact([{ name, serialNum, sex: checkedMan ? "male" : "female" }]);
+      setContact([{ name, serialNum }]);
       navigation.navigate("Home");
     }
   };
@@ -152,7 +155,7 @@ const Register = ({ navigation }) => {
                 onChangeText={(val) => setName(val)}
               />
 
-              <SexSelectContainer>
+              {/* <SexSelectContainer>
                 <CheckboxContainer>
                   <Icon
                     name="man"
@@ -193,7 +196,7 @@ const Register = ({ navigation }) => {
                     }}
                   />
                 </CheckboxContainer>
-              </SexSelectContainer>
+              </SexSelectContainer> */}
               <ButtonContainer>
                 <CircleButton
                   title="üye Ol"
@@ -203,6 +206,12 @@ const Register = ({ navigation }) => {
             </BodyContainer>
           </Container>
         </BackGround>
+        <WarningModal
+          setWarningVisibility={setWarningVisibility}
+          warningVisibility={warningVisibility}
+          title="Ayy !!!"
+          note="Lütfen hep boşluğu doldurun."
+        />
       </KeyboardAwareScrollView>
     );
   } else {
@@ -212,10 +221,8 @@ const Register = ({ navigation }) => {
           <SPimageComponent
             source={require("../assets/images/Screen_Shot_2022-10-27_at_13.56.36-removebg.png")}
           />
-          <SPTitleText>Hoşgeldiniz</SPTitleText>
-          <SPNameText>{`${contact.name} ${
-            contact.sex === "female" ? "Hanım" : "Bey"
-          }`}</SPNameText>
+          <SPTitleText>Hoşgeldin</SPTitleText>
+          <SPNameText>{`${contact.name}`}</SPNameText>
 
           <Button
             title="Giriş yapmak"

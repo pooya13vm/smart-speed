@@ -12,6 +12,7 @@ import { COLORS } from "../tools/colors";
 import { getPermission } from "../tools/getPermittion";
 import BLConnectionModal from "../components/BLConnectionModal";
 import TurnuvaOLModal from "../components/TurnuvaOLModal";
+import WarningModal from "../components/WarningModal";
 
 const BLTManager = new BleManager();
 
@@ -60,7 +61,7 @@ const Home = ({ navigation }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [connectedDevice, setConnectedDevice] = useState();
   const [TUmodalVisible, setTUmodalVisible] = useState(false);
-
+  const [warningVisibility, setWarningVisibility] = useState(false);
   //context
   const {
     contact,
@@ -266,7 +267,7 @@ const Home = ({ navigation }) => {
             if (isConnected) {
               setTUmodalVisible(true);
             } else {
-              Alert.alert("Lütfen önce Bluetooth bağlantısını kurun");
+              setWarningVisibility(true);
             }
           }}
         >
@@ -279,7 +280,7 @@ const Home = ({ navigation }) => {
               navigation.navigate("Sarj");
               sendBoxValue("charge");
             } else {
-              Alert.alert("Lütfen önce Bluetooth bağlantısını kurun");
+              setWarningVisibility(true);
             }
           }}
         >
@@ -307,6 +308,12 @@ const Home = ({ navigation }) => {
         isScanning={isScanning}
         setModalVisible={setModalVisible}
         disconnectBluetooth={disconnectBluetooth}
+      />
+      <WarningModal
+        setWarningVisibility={setWarningVisibility}
+        warningVisibility={warningVisibility}
+        title=" "
+        note="Lütfen önce Bluetooth bağlantısını kurun."
       />
     </ScreenLayout>
   );

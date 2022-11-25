@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Alert, FlatList } from "react-native";
+import { FlatList } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Input } from "@rneui/base";
 import { AppContext } from "../context/context";
@@ -11,6 +11,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 //components
 import ScreenLayout from "../components/ScreenLayout";
 import { COLORS } from "../tools/colors";
+import WarningModal from "../components/WarningModal";
 
 //styled components
 const InputContainer = styled.View`
@@ -97,10 +98,11 @@ const Katilimci = ({ navigation }) => {
   //states
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [warningVisibility, setWarningVisibility] = useState(false);
   //handlers
   const addItemToList = () => {
     if (name === "") {
-      Alert.alert("uyarı", "Lütfen Formdaki Tüm Girdileri Doldurun");
+      setWarningVisibility(true);
     } else {
       setLoading(true);
       const newPerson = { name, id: uuid.v4() };
@@ -194,6 +196,12 @@ const Katilimci = ({ navigation }) => {
           </AnimationContainer>
         )}
       </ListContainer>
+      <WarningModal
+        setWarningVisibility={setWarningVisibility}
+        warningVisibility={warningVisibility}
+        title="Ayy !!!"
+        note="Lütfen Formdaki Tüm Girdileri Doldurun."
+      />
     </ScreenLayout>
   );
 };

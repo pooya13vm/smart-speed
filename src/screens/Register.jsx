@@ -153,48 +153,6 @@ const Register = ({ navigation }) => {
                 onChangeText={(val) => setName(val)}
               />
 
-              {/* <SexSelectContainer>
-                <CheckboxContainer>
-                  <Icon
-                    name="man"
-                    type="ionicons"
-                    size={42}
-                    color={COLORS.darkBlue}
-                  />
-                  <CheckBox
-                    checkedIcon="dot-circle-o"
-                    uncheckedIcon="circle-o"
-                    uncheckedColor={COLORS.darkBlue}
-                    containerStyle={{ backgroundColor: "transparent" }}
-                    checked={checkedMan}
-                    checkedColor={COLORS.darkGreen}
-                    onPress={() => {
-                      setCheckedMan(!checkedMan);
-                      if (checkedWoman === true) setCheckedWoman(false);
-                    }}
-                  />
-                </CheckboxContainer>
-                <CheckboxContainer>
-                  <Icon
-                    name="woman-sharp"
-                    type="ionicons"
-                    size={42}
-                    color={COLORS.darkBlue}
-                  />
-                  <CheckBox
-                    checkedIcon="dot-circle-o"
-                    uncheckedIcon="circle-o"
-                    containerStyle={{ backgroundColor: "transparent" }}
-                    checked={checkedWoman}
-                    uncheckedColor={COLORS.darkBlue}
-                    checkedColor={COLORS.darkGreen}
-                    onPress={() => {
-                      setCheckedWoman(!checkedWoman);
-                      if (checkedMan === true) setCheckedMan(false);
-                    }}
-                  />
-                </CheckboxContainer>
-              </SexSelectContainer> */}
               <ButtonContainer>
                 <CircleButton
                   title="üye Ol"
@@ -223,10 +181,11 @@ const Register = ({ navigation }) => {
           <SPNameText>{`${contact[0].name}`}</SPNameText>
 
           <Button
-            title="Giriş yapmak"
+            title="Giriş"
             type="outline"
             buttonStyle={{
               marginTop: "40%",
+              width: 150,
               borderColor: COLORS.darkBlue,
               borderWidth: 2,
               borderRadius: 10,

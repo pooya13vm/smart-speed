@@ -14,7 +14,7 @@ const ModalBackground = styled.View`
 `;
 const ModalContainer = styled.View`
   width: 80%;
-  height: 40%;
+  height: 47%;
   background-color: #fefefe;
   margin-top: 10%;
   border-radius: 20px;

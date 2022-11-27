@@ -85,10 +85,35 @@ const TurnuvaOLModal = ({
         passingTime: [],
       };
       setRace(newRace);
-      sendBoxValue(`${myParkur[0].tip}/${myParkur[0].number}`);
+      sendBoxValue(sendingMessageMaker(myParkur[0].number, myParkur[0].tip));
+      console.log(sendingMessageMaker(myParkur[0].number, myParkur[0].tip));
       setTUmodalVisible(false);
       navigation.navigate("TurnuvaList");
     }
+  };
+  const sendingMessageMaker = (deviceNumber, tip) => {
+    if (deviceNumber == 2 && tip === "Renkli") return "B";
+    if (deviceNumber == 2 && tip === "Tek Renk") return "A";
+    if (deviceNumber == 3 && tip === "Tek Renk") return "D";
+    if (deviceNumber == 3 && tip === "Renkli") return "E";
+    if (deviceNumber == 4 && tip === "Tek Renk") return "F";
+    if (deviceNumber == 4 && tip === "Renkli") return "G";
+    if (deviceNumber == 5 && tip === "Tek Renk") return "H";
+    if (deviceNumber == 5 && tip === "Renkli") return "I";
+    if (deviceNumber == 6 && tip === "Tek Renk") return "J";
+    if (deviceNumber == 6 && tip === "Renkli") return "K";
+    if (deviceNumber == 7 && tip === "Tek Renk") return "L";
+    if (deviceNumber == 7 && tip === "Renkli") return "M";
+    if (deviceNumber == 8 && tip === "Tek Renk") return "N";
+    if (deviceNumber == 8 && tip === "Renkli") return "O";
+    if (deviceNumber == 9 && tip === "Tek Renk") return "P";
+    if (deviceNumber == 9 && tip === "Renkli") return "R";
+    if (deviceNumber == 10 && tip === "Tek Renk") return "S";
+    if (deviceNumber == 10 && tip === "Renkli") return "T";
+    if (deviceNumber == 11 && tip === "Tek Renk") return "U";
+    if (deviceNumber == 11 && tip === "Renkli") return "V";
+    if (deviceNumber == 12 && tip === "Tek Renk") return "Y";
+    if (deviceNumber == 12 && tip === "Renkli") return "X";
   };
 
   return (

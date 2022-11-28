@@ -72,6 +72,7 @@ const TurnuvaModal = ({
   race,
   messageBLE,
   setMessageBLE,
+  sendZToDevice,
 }) => {
   const [devices, setDevices] = useState([]);
   const [isRunning, setIsRunning] = useState(false);
@@ -131,6 +132,7 @@ const TurnuvaModal = ({
       setFinished(false);
       setReset(!isReset);
       setMessageBLE(null);
+      sendZToDevice();
     }
   };
   const saveTimesToList = () => {
@@ -182,55 +184,3 @@ const TurnuvaModal = ({
 };
 
 export default TurnuvaModal;
-
-// useEffect(() => {
-//   if (messageBLE) {
-//     if (messageBLE == "b") {
-//       start();
-//     } else {
-//       HandleMiddleTime(+messageBLE);
-//     }
-//     console.log("in turnuva modal", messageBLE);
-//   }
-// }, [messageBLE]);
-// console.log(devices);
-//handlers
-// const start = useCallback(() => {
-//   if (!isRunning && !isFinished) {
-//     console.log("in start ...");
-//     const copy = [...devices];
-//     copy[0] = "Başladı";
-//     setDevices(copy);
-//     const interval = setInterval(() => {
-//       setTime((previousTime) => previousTime + 1);
-//     }, 10);
-//     timer.current = interval;
-//   } else {
-//     console.log("in stop ...");
-//     clearInterval(timer.current);
-//   }
-//   setIsRunning((pre) => !pre);
-// }, [isRunning]);
-// console.log(devices);
-
-// const HandleMiddleTime = useCallback(
-//   (message) => {
-//     if (+message < +race.deviceNum * 2 - 1) {
-//       if (isRunning) {
-//         const copy = [...devices];
-//         copy[message] = time;
-//         setDevices(copy);
-//         if (+message === +race.deviceNum * 2 - 1) {
-//           console.log("in else....");
-//           setFinished(true);
-//           start();
-//         }
-//       }
-//     } else {
-//       console.log("in else....");
-//       setFinished(true);
-//       start();
-//     }
-//   },
-//   [isRunning, time]
-// );

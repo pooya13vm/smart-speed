@@ -91,7 +91,10 @@ const TurnuvaList = ({ navigation }) => {
     }
     setMessage(null);
   }, [race]);
-  // console.log("in list :", message);
+
+  const sendZToDevice = () => {
+    sendBoxValue("Z", connectedDeviceId);
+  };
 
   return (
     <ScreenLayout
@@ -126,7 +129,7 @@ const TurnuvaList = ({ navigation }) => {
                 onPress={() => {
                   setItem(item);
                   setModalVisible(true);
-                  sendBoxValue("Z", connectedDeviceId);
+                  sendZToDevice();
                 }}
               >
                 <Icon name="play" size={16} color={COLORS.darkBlue} />
@@ -158,6 +161,7 @@ const TurnuvaList = ({ navigation }) => {
         setRace={setRace}
         messageBLE={message}
         setMessageBLE={setMessage}
+        sendZToDevice={sendZToDevice}
       />
     </ScreenLayout>
   );

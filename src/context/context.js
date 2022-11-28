@@ -11,6 +11,7 @@ export const AppProvider = ({ children }) => {
   const [allRaces, setAllRaces] = useState([]);
   const [chargeMessage, setChargeMessage] = useState([]);
   const [message, setMessage] = useState(null);
+  const [connectedDeviceId, setConnectedDeviceId] = useState("");
 
   const checkStorage = async () => {
     try {
@@ -103,8 +104,19 @@ export const AppProvider = ({ children }) => {
       chargeMessage,
       message,
       setMessage,
+      connectedDeviceId,
+      setConnectedDeviceId,
     }),
-    [race, contact, parkur, persons, allRaces, chargeMessage, message]
+    [
+      race,
+      contact,
+      parkur,
+      persons,
+      allRaces,
+      chargeMessage,
+      message,
+      connectedDeviceId,
+    ]
   );
 
   return <AppContext.Provider value={ctx}>{children}</AppContext.Provider>;

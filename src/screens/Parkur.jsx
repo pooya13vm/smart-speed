@@ -20,6 +20,19 @@ const DropdownData = [
   { label: "Tek Renk", value: "Tek Renk" },
   { label: "Renkli", value: "Renkli" },
 ];
+const DropdownDataNumbers = [
+  { label: "2", value: 2 },
+  { label: "3", value: 3 },
+  { label: "4", value: 4 },
+  { label: "5", value: 5 },
+  { label: "6", value: 6 },
+  { label: "7", value: 7 },
+  { label: "8", value: 8 },
+  { label: "9", value: 9 },
+  { label: "10", value: 10 },
+  { label: "11", value: 11 },
+  { label: "12", value: 12 },
+];
 
 //styled components
 const NameInputContainer = styled.View`
@@ -31,10 +44,13 @@ const InputsContainer = styled.View`
   width: 90%;
   justify-content: space-between;
   align-items: center;
+  margin-vertical: 6%;
 `;
-const DropdownContainer = styled.View`
-  width: 120px;
-  margin-right: 10px;
+const Dropdown1Container = styled.View`
+  width: 35%;
+`;
+const Dropdown2Container = styled.View`
+  width: 38%;
 `;
 const AddBtn = styled.TouchableOpacity`
   width: 60px;
@@ -170,13 +186,12 @@ const Parkur = ({ navigation }) => {
         />
       </NameInputContainer>
       <InputsContainer>
-        <Input
-          // label="Cihaz Sayısı"
+        {/* <Input
           placeholder="Cihaz Sayısı"
           placeholderTextColor={COLORS.darkGreen}
           value={number}
           containerStyle={{
-            width: 120,
+            width: "30%",
             alignItems: "center",
           }}
           keyboardType="number-pad"
@@ -195,14 +210,21 @@ const Parkur = ({ navigation }) => {
             marginTop: 26,
           }}
           onChangeText={(val) => setNumber(val)}
-        />
-        <DropdownContainer>
+        /> */}
+        <Dropdown1Container>
+          <DropdownComponent
+            placeholder="Cihaz"
+            data={DropdownDataNumbers}
+            onChangeSet={setNumber}
+          />
+        </Dropdown1Container>
+        <Dropdown2Container>
           <DropdownComponent
             placeholder="Tipi Seç"
             data={DropdownData}
             onChangeSet={setTip}
           />
-        </DropdownContainer>
+        </Dropdown2Container>
         <AddBtn onPress={addItemToList}>
           <AddBtnTitle>Ekle</AddBtnTitle>
         </AddBtn>

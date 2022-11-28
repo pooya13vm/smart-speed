@@ -19,12 +19,12 @@ const BLTManager = new BleManager();
 LogBox.ignoreLogs(["new NativeEventEmitter"]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
-// const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
-const SERVICE_UUID = "0000FFE0-0000-1000-8000-00805F9B34FB";
-// const MESSAGE_UUID = "6d68efe5-04b6-4a85-abc4-c2670b7bf7fd";
-const MESSAGE_UUID = "0000FFE1-0000-1000-8000-00805F9B34FB";
-// const BOX_UUID = "f27b53ad-c63d-49a0-8c0f-9f297e6cc520";
-const BOX_UUID = "0000FFE1-0000-1000-8000-00805F9B34FB";
+const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
+// const SERVICE_UUID = "0000FFE0-0000-1000-8000-00805F9B34FB";
+const MESSAGE_UUID = "6d68efe5-04b6-4a85-abc4-c2670b7bf7fd";
+// const MESSAGE_UUID = "0000FFE1-0000-1000-8000-00805F9B34FB";
+const BOX_UUID = "f27b53ad-c63d-49a0-8c0f-9f297e6cc520";
+// const BOX_UUID = "0000FFE1-0000-1000-8000-00805F9B34FB";
 
 const ButtonsContainer = styled.View`
   width: 80%;
@@ -55,6 +55,18 @@ const ButtonText = styled.Text`
   text-align: center;
 `;
 
+export const sendBoxValue = async (value, id) => {
+  console.log("in sending value : ", id);
+  BLTManager.writeCharacteristicWithResponseForDevice(
+    id,
+    SERVICE_UUID,
+    BOX_UUID,
+    base64.encode(value.toString())
+  ).then((characteristic) => {
+    console.log("Box value changed to :", base64.decode(characteristic.value));
+  });
+};
+
 const Home = ({ navigation }) => {
   //states
   const [isAllowed, setAllowed] = useState(false);
@@ -74,6 +86,7 @@ const Home = ({ navigation }) => {
     parkur,
     persons,
     setRace,
+    setConnectedDeviceId,
   } = useContext(AppContext);
 
   const progress = useRef(new Animated.Value(0)).current;
@@ -125,7 +138,8 @@ const Home = ({ navigation }) => {
         console.warn(error);
       }
 
-      if (scannedDevice && scannedDevice.name == "BT05") {
+      // if (scannedDevice && scannedDevice.name == "BT05") {
+      if (scannedDevice && scannedDevice.name == "BLEExample") {
         BLTManager.stopDeviceScan();
         connectDevice(scannedDevice);
         setScanning(false);
@@ -225,20 +239,20 @@ const Home = ({ navigation }) => {
       }
     }
   }
-  async function sendBoxValue(value) {
-    console.log("in sending value : ", connectedDevice.id);
-    BLTManager.writeCharacteristicWithResponseForDevice(
-      connectedDevice.id,
-      SERVICE_UUID,
-      BOX_UUID,
-      base64.encode(value.toString())
-    ).then((characteristic) => {
-      console.log(
-        "Box value changed to :",
-        base64.decode(characteristic.value)
-      );
-    });
-  }
+  // async function sendBoxValue(value) {
+  //   console.log("in sending value : ", connectedDevice.id);
+  //   BLTManager.writeCharacteristicWithResponseForDevice(
+  //     connectedDevice.id,
+  //     SERVICE_UUID,
+  //     BOX_UUID,
+  //     base64.encode(value.toString())
+  //   ).then((characteristic) => {
+  //     console.log(
+  //       "Box value changed to :",
+  //       base64.decode(characteristic.value)
+  //     );
+  //   });
+  // }
   const animationStyle = {
     width: 8,
     height: 8,
@@ -269,6 +283,7 @@ const Home = ({ navigation }) => {
           onPress={() => {
             if (isConnected) {
               setTUmodalVisible(true);
+              setConnectedDeviceId(connectedDevice.id);
             } else {
               setWarningVisibility(true);
             }
@@ -281,7 +296,7 @@ const Home = ({ navigation }) => {
           onPress={() => {
             if (isConnected) {
               navigation.navigate("Sarj");
-              sendBoxValue("c");
+              sendBoxValue("c", connectedDevice.id);
             } else {
               setWarningVisibility(true);
             }
@@ -293,7 +308,7 @@ const Home = ({ navigation }) => {
         <Button onPress={connectingToDevice}>
           <Animated.View style={animationStyle}></Animated.View>
           <Icon name="bluetooth-b" size={24} color={COLORS.darkBlue} />
-          <ButtonText>Bağlamak</ButtonText>
+          <ButtonText>Bağlan</ButtonText>
         </Button>
       </ButtonsContainer>
       <TurnuvaOLModal
@@ -304,6 +319,7 @@ const Home = ({ navigation }) => {
         setTUmodalVisible={setTUmodalVisible}
         navigation={navigation}
         sendBoxValue={sendBoxValue}
+        id={connectedDevice ? connectedDevice.id : null}
       />
       <BLConnectionModal
         isConnected={isConnected}

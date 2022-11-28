@@ -240,7 +240,7 @@ const Gecmis = ({ navigation }) => {
       <Container>
         <DDcontainer>
           <DropdownComponent
-            placeholder="Turnuva Sec"
+            placeholder="Turnuva Seç"
             data={raceData}
             onChangeSet={(id) => handleSelectedRace(id)}
           />

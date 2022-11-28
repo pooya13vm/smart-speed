@@ -11,6 +11,7 @@ import { COLORS } from "../tools/colors";
 import { AppContext } from "../context/context";
 import { displayTime } from "../tools/displayTime";
 import RectangleButton from "../components/RectangleButton";
+import { sendBoxValue } from "./Home";
 
 //styled components
 const ListTitleContainer = styled.View`
@@ -72,7 +73,7 @@ const TurnuvaList = ({ navigation }) => {
   const [personsData, setPersonsData] = useState([]);
   const [item, setItem] = useState();
   //context
-  const { saveRace, setRace, race, message, setMessage } =
+  const { saveRace, setRace, race, message, setMessage, connectedDeviceId } =
     useContext(AppContext);
 
   useEffect(() => {
@@ -125,6 +126,7 @@ const TurnuvaList = ({ navigation }) => {
                 onPress={() => {
                   setItem(item);
                   setModalVisible(true);
+                  sendBoxValue("Z", connectedDeviceId);
                 }}
               >
                 <Icon name="play" size={16} color={COLORS.darkBlue} />

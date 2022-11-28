@@ -170,8 +170,8 @@ const TurnuvaModal = ({
             <TurnuvaTimeFlatList devices={devices} />
             {isFinished && (
               <ButtonContainer>
-                <RectangleButton title="Yeniden" onPress={resetHandler} />
-                <RectangleButton title="Kurtar" onPress={saveTimesToList} />
+                <RectangleButton title="Tekrar" onPress={resetHandler} />
+                <RectangleButton title="Kaydet" onPress={saveTimesToList} />
               </ButtonContainer>
             )}
           </ModalContainer>

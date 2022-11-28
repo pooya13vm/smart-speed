@@ -144,7 +144,7 @@ const Katilimci = ({ navigation }) => {
       <InputContainer>
         <Input
           value={name}
-          label="Katilimci Adı : *"
+          label="Katılımcı Adı : *"
           style={inputsStyle}
           inputContainerStyle={{
             borderBottomWidth: 0,

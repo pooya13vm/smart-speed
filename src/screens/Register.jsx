@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Input, Button } from "@rneui/themed";
-// import Icon from "react-native-vector-icons/Ionicons";
 import styled from "styled-components";
 
 //personal components
@@ -29,22 +28,11 @@ const ImageComponent = styled.Image`
   border-radius: 70px;
   margin-bottom: 10%;
 `;
-const BodyContainer = styled.ScrollView`
+const BodyContainer = styled.View`
   width: 90%;
 `;
-// const SexSelectContainer = styled.View`
-//   flex-direction: row;
-//   justify-content: space-around;
-// `;
-// const CheckboxContainer = styled.View`
-//   justify-content: center;
-//   align-items: center;
-//   border-color: gray;
-//   padding: 20px;
-//   border-radius: 15px;
-// `;
 const ButtonContainer = styled.View`
-  margin-top: 25%;
+  margin-top: 20%;
   align-items: center;
   justify-content: center;
 `;
@@ -85,8 +73,6 @@ const Register = ({ navigation }) => {
   const [serialNum, setSerialNum] = useState("");
   const [sportGN, setSportGn] = useState("");
   const [warningVisibility, setWarningVisibility] = useState(false);
-  // const [checkedMan, setCheckedMan] = useState(false);
-  // const [checkedWoman, setCheckedWoman] = useState(false);
 
   const { setContact, contact, checkStorage } = useContext(AppContext);
 
@@ -112,7 +98,7 @@ const Register = ({ navigation }) => {
             />
             <BodyContainer>
               <Input
-                label="Cihazın seri numarası : "
+                label="Cihazın Seri Numarası : "
                 style={inputsStyle}
                 inputStyle={{
                   color: COLORS.darkGreen,
@@ -125,7 +111,7 @@ const Register = ({ navigation }) => {
                 onChangeText={(val) => setSerialNum(val)}
               />
               <Input
-                label="Spor kompleksinin adı :"
+                label="Spor Kompleksinin Adı :"
                 style={inputsStyle}
                 inputContainerStyle={{
                   borderBottomWidth: 0,
@@ -141,7 +127,7 @@ const Register = ({ navigation }) => {
                 onChangeText={(val) => setSportGn(val)}
               />
               <Input
-                label="Kullanıcı adı : *"
+                label="Kullanıcı Adı : *"
                 style={inputsStyle}
                 inputContainerStyle={{
                   borderBottomWidth: 0,
@@ -155,7 +141,7 @@ const Register = ({ navigation }) => {
 
               <ButtonContainer>
                 <CircleButton
-                  title="üye Ol"
+                  title="Üye Ol"
                   onPressFunction={() => saveContact()}
                 />
               </ButtonContainer>
@@ -184,7 +170,7 @@ const Register = ({ navigation }) => {
             title="Giriş"
             type="outline"
             buttonStyle={{
-              marginTop: "40%",
+              marginTop: "30%",
               width: 150,
               borderColor: COLORS.darkBlue,
               borderWidth: 2,

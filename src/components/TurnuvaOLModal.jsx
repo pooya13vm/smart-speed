@@ -35,6 +35,7 @@ const TurnuvaOLModal = ({
   setTUmodalVisible,
   navigation,
   sendBoxValue,
+  id,
 }) => {
   //states
   const [turnuvaName, setTurnuvaName] = useState("");
@@ -85,8 +86,11 @@ const TurnuvaOLModal = ({
         passingTime: [],
       };
       setRace(newRace);
-      sendBoxValue(sendingMessageMaker(myParkur[0].number, myParkur[0].tip));
-      console.log(sendingMessageMaker(myParkur[0].number, myParkur[0].tip));
+      sendBoxValue(
+        sendingMessageMaker(myParkur[0].number, myParkur[0].tip),
+        id
+      );
+
       setTUmodalVisible(false);
       navigation.navigate("TurnuvaList");
     }
@@ -163,7 +167,7 @@ const TurnuvaOLModal = ({
             </DropdownContainer>
           </InputContainer>
           <CircleButton
-            title="Başlat"
+            title="Kaydet"
             onPressFunction={() => {
               newRaceHandler();
             }}

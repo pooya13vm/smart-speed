@@ -12,6 +12,7 @@ import { AppContext } from "../context/context";
 import { displayTime } from "../tools/displayTime";
 import CircleButton from "../components/CircleButton";
 import { View, Text, Share } from "react-native";
+import RectangleButton from "../components/RectangleButton";
 
 //styled components
 const Container = styled.View`
@@ -78,7 +79,7 @@ const ButtonContainer = styled.TouchableOpacity`
   border-color: ${COLORS.darkBlue};
 `;
 
-//Modal styles components
+// detail Modal styles components
 const ModalBackground = styled.View`
   width: 100%;
   height: 100%;
@@ -106,18 +107,6 @@ const ModalTitle = styled.Text`
   font-weight: bold;
   color: ${COLORS.darkBlue};
 `;
-const ModalFirstItemContainer = styled.View`
-  flex-direction: row;
-  width: 60%;
-  justify-content: space-around;
-  align-items: center;
-  margin-vertical: 5px;
-`;
-const ModalFirstItemText = styled.Text`
-  font-size: 16px;
-  margin-vertical: 5px;
-  color: ${COLORS.darkBlue};
-`;
 const ModalListItemContainer = styled.View`
   flex-direction: row;
   justify-content: space-around;
@@ -129,6 +118,25 @@ const ModalItemText = styled.Text`
   color: ${(props) => (!props.isEnd ? COLORS.darkBlue : COLORS.lightGreen)};
   font-weight: ${(props) => (props.isEnd ? "bold" : "400")};
 `;
+// be sure modal styles
+const ModalBackground2 = styled.View`
+  width: 100%;
+  height: 100%;
+  background-color: rgba(23, 54, 68, 0.4);
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+`;
+const ModalContainer2 = styled.View`
+  width: 80%;
+  height: 47%;
+  background-color: #fefefe;
+  margin-top: 10%;
+  border-radius: 20px;
+  align-self: center;
+  align-items: center;
+  padding-horizontal: 15px;
+`;
 
 const Gecmis = ({ navigation }) => {
   //states
@@ -138,6 +146,7 @@ const Gecmis = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [selectedItem, setSelectedItem] = useState({});
+  const [warningVisibility, setWarningVisibility] = useState(false);
 
   //context
   const { allRaces, setAllRaces, saveAllRacesToStorage } =
@@ -159,6 +168,26 @@ const Gecmis = ({ navigation }) => {
     }
   }, [allRaces]);
 
+  const makeTurkishDate = (date) => {
+    const indexOfSpace = date.indexOf(" ");
+    const restOfDate = date.slice(indexOfSpace, date.length);
+    const englishMonth = date.slice(0, indexOfSpace);
+    let turkishMonth = "";
+    if (englishMonth === "Jan") turkishMonth = "Ocak";
+    if (englishMonth === "Feb") turkishMonth = "şubat";
+    if (englishMonth === "Mar") turkishMonth = "Mart";
+    if (englishMonth === "Apr") turkishMonth = "Nisan";
+    if (englishMonth === "May") turkishMonth = "Mayıs";
+    if (englishMonth === "June") turkishMonth = "Haziran";
+    if (englishMonth === "July") turkishMonth = "Temmuz";
+    if (englishMonth === "Aug") turkishMonth = "Ağustos";
+    if (englishMonth === "Sept") turkishMonth = "Eylül";
+    if (englishMonth === "Oct") turkishMonth = "Ekim";
+    if (englishMonth === "Nov") turkishMonth = "Kasım";
+    if (englishMonth === "Dec") turkishMonth = "Aralık";
+
+    return turkishMonth + restOfDate;
+  };
   //handlers
   const handleSelectedRace = async (id) => {
     setLoading(true);
@@ -249,17 +278,17 @@ const Gecmis = ({ navigation }) => {
           <DataContainer>
             <DataTopContainer>
               <TextComponent>
-                Turnuva Adi : {selectedRace[0].name}
+                Turnuva Adı : {selectedRace[0].name}
               </TextComponent>
               <TextComponent>
-                Turnuva Parkur : {selectedRace[0].parkurName}
+                Turnuva Parkuru : {selectedRace[0].parkurName}
               </TextComponent>
               <TextComponent>
-                Turnuva Tarihi : {selectedRace[0].date}
+                Turnuva Tarihi : {makeTurkishDate(selectedRace[0].date)}
               </TextComponent>
               <ListTitleContainer>
-                <ListTitle>Katiliciler</ListTitle>
-                <ListTitle>Sure</ListTitle>
+                <ListTitle>Katılımcılar</ListTitle>
+                <ListTitle>Süre</ListTitle>
               </ListTitleContainer>
               {!loading ? (
                 <FlatList
@@ -303,7 +332,7 @@ const Gecmis = ({ navigation }) => {
                     autoPlay
                     loop={false}
                   />
-                  <AnimationTitle>lütfen bekleyin</AnimationTitle>
+                  <AnimationTitle>Lütfen bekleyin</AnimationTitle>
                 </AnimationContainer>
               )}
             </DataTopContainer>
@@ -314,9 +343,7 @@ const Gecmis = ({ navigation }) => {
                   justifyContent: "space-evenly",
                 }}
               >
-                <ButtonContainer
-                  onPress={() => deleteHandler(selectedRace[0].id)}
-                >
+                <ButtonContainer onPress={() => setWarningVisibility(true)}>
                   <Icon name="trash" size={24} color={COLORS.darkBlue} />
                 </ButtonContainer>
                 <ButtonContainer onPress={onShare}>
@@ -326,6 +353,7 @@ const Gecmis = ({ navigation }) => {
             )}
           </DataContainer>
         )}
+        {/* --------------detail modal------------ */}
         <Modal visible={showDetail} animationType="fade" transparent={true}>
           <ModalBackground>
             <ModalContainer>
@@ -339,10 +367,6 @@ const Gecmis = ({ navigation }) => {
                 />
               </ModalAnimationContainer>
               <ModalTitle>{selectedItem.name}</ModalTitle>
-              {/* <ModalFirstItemContainer>
-                <Icon name="flag-o" color={COLORS.darkBlue} size={22} />
-                <ModalFirstItemText>Başlangıç ​​Noktası</ModalFirstItemText>
-              </ModalFirstItemContainer> */}
               <FlatList
                 contentContainerStyle={{
                   alignItems: "center",
@@ -373,6 +397,64 @@ const Gecmis = ({ navigation }) => {
               </View>
             </ModalContainer>
           </ModalBackground>
+        </Modal>
+        {/* ---------------be sure modal----------- */}
+        <Modal
+          visible={warningVisibility}
+          animationType="fade"
+          transparent={true}
+        >
+          <ModalBackground2>
+            <ModalContainer2>
+              <View style={{ width: 120, height: 120 }}>
+                <Lottie
+                  style={{ flex: 1 }}
+                  source={require("../assets/images/104320-warning-red.json")}
+                  autoPlay
+                  loop
+                />
+              </View>
+              <Text
+                style={{
+                  color: COLORS.darkBlue,
+                  fontWeight: "bold",
+                  fontSize: 24,
+                }}
+              >
+                "Lütfen Dikkatli Ol"
+              </Text>
+              <Text
+                style={{
+                  color: COLORS.darkBlue,
+                  fontWeight: "bold",
+                  fontSize: 16,
+                  marginVertical: 30,
+                }}
+              >
+                "öğeyi sileceğinizden emin misiniz?""
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  width: "90%",
+                  marginTop: 30,
+                }}
+              >
+                <RectangleButton
+                  title="Hayır"
+                  onPress={() => setWarningVisibility(false)}
+                />
+                <RectangleButton
+                  title="Evet"
+                  onPress={() => {
+                    deleteHandler(selectedRace[0].id);
+                    setWarningVisibility(false);
+                  }}
+                />
+              </View>
+            </ModalContainer2>
+          </ModalBackground2>
         </Modal>
       </Container>
     </ScreenLayout>

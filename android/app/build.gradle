@@ -147,10 +147,10 @@ android {
         applicationId "com.smartspeed"
         ndkVersion = "21.4.7075529"
         compileSdkVersion = 31
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        // minSdkVersion = 21
-        // targetSdkVersion = 31
+        // minSdkVersion rootProject.ext.minSdkVersion
+        // targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdkVersion = 21
+        targetSdkVersion = 31
         versionCode 1
         versionName "1.0"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
@@ -262,7 +262,7 @@ android {
             // signingConfig signingConfigs.release         
             signingConfig signingConfigs.debug
             
-            // minifyEnabled enableProguardInReleaseBuilds
+            minifyEnabled enableProguardInReleaseBuilds
             minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

@@ -3,10 +3,16 @@ import { Dropdown } from "react-native-element-dropdown";
 import { COLORS } from "../tools/colors";
 import { View, Text } from "react-native";
 
-const DropdownComponent = ({ data, onChangeSet, placeholder }) => {
+const DropdownComponent = ({
+  data,
+  onChangeSet,
+  placeholder,
+  search = false,
+}) => {
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const renderItem = (item) => {
+    console.log(item);
     return (
       <View style={{ margin: 10 }}>
         <Text style={{ color: COLORS.darkBlue, fontSize: 18 }}>
@@ -35,7 +41,7 @@ const DropdownComponent = ({ data, onChangeSet, placeholder }) => {
       iconColor={COLORS.darkGreen}
       labelField="label"
       valueField="value"
-      search={false}
+      search={search}
       maxHeight={300}
       placeholderStyle={{ fontSize: 16, color: COLORS.darkGreen }}
       selectedTextStyle={{ fontSize: 16, color: COLORS.darkGreen }}

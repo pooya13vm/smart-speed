@@ -9,6 +9,7 @@ import { AppContext } from "../context/context";
 import { COLORS } from "../tools/colors";
 import CircleButton from "../components/CircleButton";
 import WarningModal from "../components/WarningModal";
+import { getPermission } from "../tools/getPermittion";
 
 //styled components
 const Container = styled.View`
@@ -84,9 +85,10 @@ const Register = ({ navigation }) => {
       navigation.navigate("Home");
     }
   };
-  console.log("in register :", contact);
+
   useEffect(() => {
     checkStorage();
+    getPermission().then((result) => setAllowed(true));
   }, []);
   if (contact.length == 0) {
     return (

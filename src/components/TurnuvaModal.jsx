@@ -80,10 +80,10 @@ const TurnuvaModal = ({
   const [time, setTime] = useState(0);
   const [isReset, setReset] = useState(false);
   const timer = useRef(null);
-
+  console.log(race);
   useEffect(() => {
     let myArray = [];
-    for (let i = 0; i < +race.deviceNum * 2 - 1; i++) {
+    for (let i = 0; i < (+race.deviceNum * 2 - 1) * +race.repeat; i++) {
       myArray.push(0);
     }
     setDevices(myArray);
@@ -119,7 +119,6 @@ const TurnuvaModal = ({
         setDevices(copy);
         setFinished(true);
         clearInterval(timer.current);
-        // setMessageBLE(null);
       }
     }
   }, [time, messageBLE]);
@@ -169,7 +168,7 @@ const TurnuvaModal = ({
             <TimerContainer>
               <TimerText>{displayTime(time)}</TimerText>
             </TimerContainer>
-            <TurnuvaTimeFlatList devices={devices} />
+            <TurnuvaTimeFlatList devices={devices} num={race.deviceNum} />
             {isFinished && (
               <ButtonContainer>
                 <RectangleButton title="Tekrar" onPress={resetHandler} />

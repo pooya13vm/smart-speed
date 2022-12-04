@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Input } from "@rneui/base";
 import uuid from "react-native-uuid";
 import styled from "styled-components";
-import { Alert } from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 
 //components
 import ScreenLayout from "./ScreenLayout";
@@ -24,7 +24,7 @@ const InputContainer = styled.View`
   margin-top: 20px;
 `;
 const DropdownContainer = styled.View`
-  padding-horizontal: 10px;
+  ${"" /* padding-horizontal: 10px; */}
 `;
 
 const TurnuvaOLModal = ({
@@ -43,6 +43,7 @@ const TurnuvaOLModal = ({
   const [selectedPerson, setSelectedPerson] = useState([]);
   const [parkurDData, SetParkurDData] = useState([]);
   const [personsData, setPersonsData] = useState([]);
+  const [repeat, setRepeat] = useState();
   //context
 
   useEffect(() => {
@@ -69,7 +70,8 @@ const TurnuvaOLModal = ({
     if (
       turnuvaName === "" ||
       selectedParkur === "" ||
-      selectedPerson.length == 0
+      selectedPerson.length == 0 ||
+      repeat === undefined
     ) {
       Alert.alert("uyarı", "Lütfen Formdaki Tüm Girdileri Doldurun.");
     } else {
@@ -81,6 +83,7 @@ const TurnuvaOLModal = ({
         date: now.toString().slice(4, 21),
         name: turnuvaName,
         parkurName: selectedParkur,
+        repeat: repeat,
         deviceNum: myParkur[0].number,
         persons: selectedPerson,
         passingTime: [],
@@ -90,6 +93,7 @@ const TurnuvaOLModal = ({
         sendingMessageMaker(myParkur[0].number, myParkur[0].tip),
         id
       );
+      sendBoxValue(repeat, id);
 
       setTUmodalVisible(false);
       navigation.navigate("TurnuvaList");
@@ -119,6 +123,18 @@ const TurnuvaOLModal = ({
     if (deviceNumber == 12 && tip === "Tek Renk") return "Y";
     if (deviceNumber == 12 && tip === "Renkli") return "X";
   };
+  const repeatData = [
+    { label: "1 Tur", value: 1 },
+    { label: "2 Tur", value: 2 },
+    { label: "3 Tur", value: 3 },
+    { label: "4 Tur", value: 4 },
+    { label: "5 Tur", value: 5 },
+    { label: "6 Tur", value: 6 },
+    { label: "7 Tur", value: 7 },
+    { label: "8 Tur", value: 8 },
+    { label: "9 Tur", value: 9 },
+    { label: "10 Tur", value: 0 },
+  ];
 
   return (
     <Modal animationType="slide" transparent={true} visible={TUmodalVisible}>
@@ -153,19 +169,29 @@ const TurnuvaOLModal = ({
               }}
               onChangeText={(val) => setTurnuvaName(val)}
             />
-            <DropdownContainer>
+
+            <View style={{ marginBottom: 20 }}>
               <DropdownComponent
                 data={parkurDData}
                 onChangeSet={setSelectedParkur}
                 placeholder="Parkur Seç"
               />
+            </View>
+
+            <DropdownComponent
+              data={repeatData}
+              onChangeSet={setRepeat}
+              placeholder="Tur Sayısı"
+            />
+            <ScrollView style={{ maxHeight: "45%" }}>
               <MultiSelectComponent
                 data2={personsData}
                 selectedItems={setSelectedPerson}
-                placeholder="Katilimcilar Seç"
+                placeholder="Katılımcılar Seç"
               />
-            </DropdownContainer>
+            </ScrollView>
           </InputContainer>
+
           <CircleButton
             title="Kaydet"
             onPressFunction={() => {

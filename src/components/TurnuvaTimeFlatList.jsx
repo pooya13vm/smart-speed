@@ -5,7 +5,7 @@ import Lottie from "lottie-react-native";
 import { displayTime } from "../tools/displayTime";
 import { COLORS } from "../tools/colors";
 
-const TurnuvaTimeFlatList = ({ devices }) => {
+const TurnuvaTimeFlatList = ({ devices, num }) => {
   if (devices.length > 0) {
     return (
       <>
@@ -27,7 +27,7 @@ const TurnuvaTimeFlatList = ({ devices }) => {
           }}
           data={devices}
           keyExtractor={(item) => item.index}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <View
               style={{
                 width: "50%",

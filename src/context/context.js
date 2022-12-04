@@ -17,7 +17,7 @@ export const AppProvider = ({ children }) => {
     try {
       const getST = await AsyncStorage.getItem("@contact");
       const parsST = JSON.parse(getST);
-      console.log("in context check ..", parsST);
+
       if (parsST.name) {
         setContact([parsST]);
         setRegistered(true);

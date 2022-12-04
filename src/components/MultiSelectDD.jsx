@@ -17,8 +17,13 @@ const MultiSelectComponent = ({
         style={styles.dropdown}
         placeholderStyle={styles.placeholderStyle}
         iconColor={COLORS.darkGreen}
-        containerStyle={{ marginTop: 5, borderRadius: 8 }}
+        containerStyle={{
+          marginTop: 5,
+          borderRadius: 8,
+        }}
         data={data2}
+        search
+        searchPlaceholder="Ara"
         labelField="label"
         valueField="value"
         placeholder={placeholder}
@@ -44,7 +49,7 @@ export default MultiSelectComponent;
 const styles = StyleSheet.create({
   container: { padding: 16 },
   dropdown: {
-    height: 50,
+    height: 45,
     borderWidth: 1,
     borderRadius: 10,
     borderColor: COLORS.darkBlue,

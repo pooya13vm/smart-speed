@@ -65,7 +65,7 @@ const BLConnectionModal = ({
             <>
               <AnimationTitle>Cihazı Bulamadı</AnimationTitle>
               <AnimationTitle>
-                lütfen cihazı kontrol edip tekrar deneyin
+                Lütfen, Cihazınızı Kontrol Ederek Tekrar Deneyiniz !
               </AnimationTitle>
               <Lottie
                 style={{ flex: 1 }}

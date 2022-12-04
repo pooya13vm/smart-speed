@@ -5,6 +5,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { BleManager } from "react-native-ble-plx";
 import base64 from "react-native-base64";
 import { LogBox, Animated, Alert } from "react-native";
+import { PERMISSIONS } from "react-native-permissions";
 
 //components
 import ScreenLayout from "../components/ScreenLayout";
@@ -108,27 +109,33 @@ const Home = ({ navigation }) => {
         Animated.delay(50),
       ])
     ).start();
+    // getPermission().then((result) => setAllowed(true));
     //turning on device Bluetooth
+    PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION;
+    PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
+    PERMISSIONS.ANDROID.BLUETOOTH_ADVERTISE;
+    PERMISSIONS.ANDROID.BLUETOOTH_CONNECT;
+    PERMISSIONS.ANDROID.BLUETOOTH_SCAN;
     BLTManager.state().then((val) => {
       if (val !== "PoweredOn") {
         BLTManager.enable().then(() => console.log("bluetooth is turned on"));
       }
     });
-    getPermission().then((result) => setAllowed(result));
     saveToStorage(contact[0]);
+    // setAllowed(true); //-----------------
   }, [progress, isConnected, connectedDevice]);
 
   //handlers
   const connectingToDevice = () => {
-    if (isAllowed) {
-      setModalVisible(true);
-      if (!isConnected) {
-        setScanning(true);
-        scanDevices();
-      }
-    } else {
-      return Alert.alert("Lütfen ayarlarda Bluetooth erişimine izin verin");
+    // if (isAllowed) {
+    setModalVisible(true);
+    if (!isConnected) {
+      setScanning(true);
+      scanDevices();
     }
+    // } else {
+    //   return Alert.alert("Lütfen ayarlarda Bluetooth erişimine izin verin");
+    // }
   };
 
   const scanDevices = async () => {
@@ -138,11 +145,16 @@ const Home = ({ navigation }) => {
         console.warn(error);
       }
 
-      if (scannedDevice && scannedDevice.name == "BT05") {
-        // if (scannedDevice && scannedDevice.name == "BLEExample") {
-        BLTManager.stopDeviceScan();
-        connectDevice(scannedDevice);
-        setScanning(false);
+      if (scannedDevice) {
+        if (
+          scannedDevice.name == "BT05" ||
+          scannedDevice.name == "MLT-BT05" ||
+          scannedDevice.name == "BLEExample"
+        ) {
+          BLTManager.stopDeviceScan();
+          connectDevice(scannedDevice);
+          setScanning(false);
+        }
       }
     });
 

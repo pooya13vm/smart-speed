@@ -12,7 +12,6 @@ const DropdownComponent = ({
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const renderItem = (item) => {
-    console.log(item);
     return (
       <View style={{ margin: 10 }}>
         <Text style={{ color: COLORS.darkBlue, fontSize: 18 }}>

@@ -88,7 +88,7 @@ const Register = ({ navigation }) => {
 
   useEffect(() => {
     checkStorage();
-    getPermission().then((result) => setAllowed(true));
+    getPermission().then((result) => console.log(result));
   }, []);
   if (contact.length == 0) {
     return (

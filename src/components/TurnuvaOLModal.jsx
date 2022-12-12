@@ -47,6 +47,7 @@ const TurnuvaOLModal = ({
   //context
 
   useEffect(() => {
+    //making data for dropdown
     if (parkur.length > 0) {
       let data = [];
       for (let i = 0; i < parkur.length; i++) {
@@ -66,6 +67,7 @@ const TurnuvaOLModal = ({
   }, [parkur, persons]);
 
   //handlers
+
   const newRaceHandler = () => {
     if (
       turnuvaName === "" ||
@@ -77,6 +79,14 @@ const TurnuvaOLModal = ({
     } else {
       let now = new Date();
       const myParkur = parkur.filter((item) => item.name === selectedParkur);
+      const participantsDataHandler = () => {
+        const dataArray = [];
+        for (let i = 0; i < selectedPerson.length; i++) {
+          const dataObj = { name: selectedPerson[i], passingTime: [] };
+          dataArray.push(dataObj);
+        }
+        return dataArray;
+      };
 
       let newRace = {
         id: uuid.v4(),
@@ -85,8 +95,7 @@ const TurnuvaOLModal = ({
         parkurName: selectedParkur,
         repeat: repeat,
         deviceNum: myParkur[0].number,
-        persons: selectedPerson,
-        passingTime: [],
+        participants: participantsDataHandler(),
       };
       setRace(newRace);
       sendBoxValue(
@@ -99,6 +108,7 @@ const TurnuvaOLModal = ({
       navigation.navigate("TurnuvaList");
     }
   };
+
   const sendingMessageMaker = (deviceNumber, tip) => {
     if (deviceNumber == 2 && tip === "Renkli") return "B";
     if (deviceNumber == 2 && tip === "Tek Renk") return "A";

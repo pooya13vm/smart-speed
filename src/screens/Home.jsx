@@ -20,12 +20,12 @@ const BLTManager = new BleManager();
 LogBox.ignoreLogs(["new NativeEventEmitter"]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
-// const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
-const SERVICE_UUID = "0000FFE0-0000-1000-8000-00805F9B34FB";
-// const MESSAGE_UUID = "6d68efe5-04b6-4a85-abc4-c2670b7bf7fd";
-const MESSAGE_UUID = "0000FFE1-0000-1000-8000-00805F9B34FB";
-// const BOX_UUID = "f27b53ad-c63d-49a0-8c0f-9f297e6cc520";
-const BOX_UUID = "0000FFE1-0000-1000-8000-00805F9B34FB";
+const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
+// const SERVICE_UUID = "0000FFE0-0000-1000-8000-00805F9B34FB";
+const MESSAGE_UUID = "6d68efe5-04b6-4a85-abc4-c2670b7bf7fd";
+// const MESSAGE_UUID = "0000FFE1-0000-1000-8000-00805F9B34FB";
+const BOX_UUID = "f27b53ad-c63d-49a0-8c0f-9f297e6cc520";
+// const BOX_UUID = "0000FFE1-0000-1000-8000-00805F9B34FB";
 
 const ButtonsContainer = styled.View`
   width: 80%;
@@ -230,6 +230,11 @@ const Home = ({ navigation }) => {
         console.log("Connection established");
       });
   }
+  // let a = "00:23:45";
+  // let b = "00:02:59";
+  // let c = "01:34:01";
+  // let anum = a.replace(/:/g, "");
+  // console.log(+anum);
 
   async function disconnectBluetooth() {
     console.log("Disconnecting start");

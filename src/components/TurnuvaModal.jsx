@@ -80,10 +80,12 @@ const TurnuvaModal = ({
   const [time, setTime] = useState(0);
   const [isReset, setReset] = useState(false);
   const timer = useRef(null);
-  console.log(race);
+
+  let indexNum = +race.deviceNum * (+race.repeat * 2) - +race.repeat * 2;
+
   useEffect(() => {
     let myArray = [];
-    for (let i = 0; i < (+race.deviceNum * 2 - 1) * +race.repeat; i++) {
+    for (let i = 0; i < indexNum + 1; i++) {
       myArray.push(0);
     }
     setDevices(myArray);
@@ -105,20 +107,20 @@ const TurnuvaModal = ({
           setTime((previousTime) => previousTime + 1);
         }, 10);
         timer.current = interval;
-      }
-      if (+messageBLE < +race.deviceNum * 2 - 2) {
+      } else if (+messageBLE < indexNum) {
         if (isRunning) {
           const copy = [...devices];
           copy[messageBLE] = time;
           setDevices(copy);
         }
-      }
-      if (+messageBLE === +race.deviceNum * 2 - 2) {
+      } else if (+messageBLE === indexNum) {
         const copy = [...devices];
         copy[messageBLE] = time;
         setDevices(copy);
         setFinished(true);
         clearInterval(timer.current);
+      } else {
+        console.log("we have a wrong code :", messageBLE);
       }
     }
   }, [time, messageBLE]);
@@ -136,12 +138,10 @@ const TurnuvaModal = ({
   };
   const saveTimesToList = () => {
     let name = item.name;
-    console.log("name :", name);
-    let racePersons = race.persons;
-    console.log("persons Array :", racePersons);
-    let indexOfPerson = racePersons.indexOf(name);
+    let racePersons = race.participants;
+    let indexOfPerson = racePersons.map((e) => e.name).indexOf(name);
     let objectCopy = { ...race };
-    objectCopy.passingTime[indexOfPerson] = devices;
+    objectCopy.participants[indexOfPerson].passingTime = devices;
     setRace({ ...objectCopy });
     setVisibility(false);
     setDevices([]);

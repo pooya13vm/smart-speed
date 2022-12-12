@@ -146,6 +146,7 @@ const Gecmis = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [selectedItem, setSelectedItem] = useState({});
+  const [personsData, setPersonsData] = useState();
   const [warningVisibility, setWarningVisibility] = useState(false);
 
   //context
@@ -194,22 +195,33 @@ const Gecmis = ({ navigation }) => {
     const filtered = await allRaces.filter((item) => item.id === id);
     setSelectedRace(filtered);
     listMaker(filtered);
+    fullDataMaker(filtered);
     setTimeout(() => {
       setLoading(false);
     }, 2000);
+  };
+  const fullDataMaker = (item) => {
+    setPersonsData(item[0].participants);
   };
   const listMaker = (item) => {
     try {
       if (item.length > 0) {
         let data = [];
-        for (let i = 0; i < item[0].persons.length; i++) {
+        let raceItem = item[0].participants;
+        for (let i = 0; i < raceItem.length; i++) {
           let obj = {
-            name: item[0].persons[i],
-            time: item[0].passingTime[0] ? item[0].passingTime[i] : "00:00",
+            name: raceItem[i].name,
+            time:
+              raceItem[i].passingTime.length > 0
+                ? raceItem[i].passingTime[raceItem[i].passingTime.length - 1]
+                : "00:00",
             id: i,
           };
           data.push(obj);
         }
+        data.sort((a, b) => {
+          return +a.time - +b.time;
+        });
         setListData(data);
       }
     } catch (error) {
@@ -217,14 +229,17 @@ const Gecmis = ({ navigation }) => {
       setLoading(false);
     }
   };
+
   const deleteHandler = (id) => {
     const filtered = allRaces.filter((item) => item.id !== id);
     setAllRaces(filtered);
     saveAllRacesToStorage(filtered);
     setSelectedRace([]);
   };
-  const handleShowDetail = (item) => {
-    setSelectedItem(item);
+  const handleShowDetail = (name) => {
+    const filtered = personsData.filter((item) => item.name === name);
+    console.log("filtered", filtered);
+    setSelectedItem(filtered[0]);
   };
   const onShare = async () => {
     try {
@@ -302,16 +317,14 @@ const Gecmis = ({ navigation }) => {
                     <>
                       <ItemContainer
                         onPress={() => {
-                          handleShowDetail(item);
+                          handleShowDetail(item.name);
                           setShowDetail((pre) => !pre);
                         }}
                       >
                         <TextComponent>{item.name}</TextComponent>
                         <TimeAndIconCon>
                           <TextComponent>
-                            {item.time
-                              ? displayTime(item.time[item.time.length - 1])
-                              : "00:00:00"}
+                            {displayTime(item.time)}
                           </TextComponent>
 
                           <Icon
@@ -354,50 +367,53 @@ const Gecmis = ({ navigation }) => {
           </DataContainer>
         )}
         {/* --------------detail modal------------ */}
-        <Modal visible={showDetail} animationType="fade" transparent={true}>
-          <ModalBackground>
-            <ModalContainer>
-              <ModalAnimationContainer>
-                <Lottie
-                  progress={progress}
-                  style={{ flex: 1 }}
-                  loop={false}
-                  autoPlay
-                  source={require("../assets/images/lf30_editor_rcr7wshw.json")}
+        {selectedItem.name && (
+          <Modal visible={showDetail} animationType="fade" transparent={true}>
+            <ModalBackground>
+              <ModalContainer>
+                <ModalAnimationContainer>
+                  <Lottie
+                    progress={progress}
+                    style={{ flex: 1 }}
+                    loop={false}
+                    autoPlay
+                    source={require("../assets/images/lf30_editor_rcr7wshw.json")}
+                  />
+                </ModalAnimationContainer>
+                <ModalTitle>{selectedItem.name}</ModalTitle>
+                <FlatList
+                  contentContainerStyle={{
+                    alignItems: "center",
+                    paddingBottom: 10,
+                  }}
+                  data={selectedItem.passingTime}
+                  renderItem={({ item, index }) => {
+                    const isEnd = index === selectedItem.passingTime.length - 1;
+                    return (
+                      <ModalListItemContainer>
+                        <ModalItemText>{`${index + 1} ->`}</ModalItemText>
+                        <Icon
+                          name={!isEnd ? "flag" : "flag-checkered"}
+                          size={20}
+                          color={COLORS.darkBlue}
+                        />
+                        <ModalItemText isEnd={isEnd}>
+                          {displayTime(item)}
+                        </ModalItemText>
+                      </ModalListItemContainer>
+                    );
+                  }}
                 />
-              </ModalAnimationContainer>
-              <ModalTitle>{selectedItem.name}</ModalTitle>
-              <FlatList
-                contentContainerStyle={{
-                  alignItems: "center",
-                  paddingBottom: 10,
-                }}
-                data={selectedItem.time}
-                renderItem={({ item, index }) => {
-                  const isEnd = index === selectedItem.time.length - 1;
-                  return (
-                    <ModalListItemContainer>
-                      <Icon
-                        name={!isEnd ? "flag" : "flag-checkered"}
-                        size={22}
-                        color={COLORS.darkBlue}
-                      />
-                      <ModalItemText isEnd={isEnd}>
-                        {displayTime(item)}
-                      </ModalItemText>
-                    </ModalListItemContainer>
-                  );
-                }}
-              />
-              <View style={{ marginBottom: 40 }}>
-                <CircleButton
-                  title="Tamam"
-                  onPressFunction={() => setShowDetail(false)}
-                />
-              </View>
-            </ModalContainer>
-          </ModalBackground>
-        </Modal>
+                <View style={{ marginBottom: 40 }}>
+                  <CircleButton
+                    title="Tamam"
+                    onPressFunction={() => setShowDetail(false)}
+                  />
+                </View>
+              </ModalContainer>
+            </ModalBackground>
+          </Modal>
+        )}
         {/* ---------------be sure modal----------- */}
         <Modal
           visible={warningVisibility}

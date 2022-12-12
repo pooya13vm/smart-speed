@@ -99,14 +99,22 @@ const Sarj = ({ navigation }) => {
               <Text style={{ fontSize: 16, color: COLORS.darkBlue }}>
                 {item.name}
               </Text>
-              <Icon
-                name={batteryName(item.percentage)}
-                size={16}
-                color={COLORS.darkBlue}
-              />
-              <Text
-                style={{ fontSize: 16, color: COLORS.darkBlue }}
-              >{`${item.percentage} %`}</Text>
+              {item.percentage != 0 ? (
+                <>
+                  <Icon
+                    name={batteryName(item.percentage)}
+                    size={16}
+                    color={COLORS.darkBlue}
+                  />
+                  <Text
+                    style={{ fontSize: 16, color: COLORS.darkBlue }}
+                  >{`${item.percentage} %`}</Text>
+                </>
+              ) : (
+                <Text style={{ fontSize: 16, color: COLORS.darkBlue }}>
+                  Cihaz Kapalı
+                </Text>
+              )}
             </View>
           )}
         />

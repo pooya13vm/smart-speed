@@ -12,6 +12,7 @@ import { AppContext } from "../context/context";
 import { displayTime } from "../tools/displayTime";
 import RectangleButton from "../components/RectangleButton";
 import { sendBoxValue } from "./Home";
+import TurnuvaResultModal from "../components/TurnuvaResultModal";
 
 //styled components
 const ListTitleContainer = styled.View`
@@ -70,19 +71,21 @@ const ButtonsContainer = styled.View`
 const TurnuvaList = ({ navigation }) => {
   //states
   const [modalVisible, setModalVisible] = useState(false);
+  const [resultModal, setResultModal] = useState(false);
   const [personsData, setPersonsData] = useState([]);
   const [item, setItem] = useState();
   //context
   const { saveRace, setRace, race, message, setMessage, connectedDeviceId } =
     useContext(AppContext);
-
   useEffect(() => {
     if (race.name) {
       let data = [];
-      for (let i = 0; i < race.persons.length; i++) {
+      for (let i = 0; i < race.participants.length; i++) {
         let item = {
-          name: race.persons[i],
-          passingTime: race.passingTime[i] ? race.passingTime[i] : [],
+          name: race.participants[i].name,
+          passingTime: race.participants[i].passingTime
+            ? race.participants[i].passingTime
+            : [],
           id: uuid.v4(),
         };
         data = [...data, item];
@@ -96,6 +99,25 @@ const TurnuvaList = ({ navigation }) => {
     sendBoxValue("Z", connectedDeviceId);
   };
 
+  const ObjectMaker = () => {
+    let myArray = [];
+    race.participants.map((item) => {
+      let myObj = {
+        name: item.name,
+        time:
+          item.passingTime.length > 0
+            ? item.passingTime[item.passingTime.length - 1]
+            : undefined,
+        id: uuid.v4(),
+      };
+      myArray.push(myObj);
+    });
+    myArray.sort((a, b) => {
+      return a.time - b.time;
+    });
+    return myArray;
+  };
+
   return (
     <ScreenLayout
       title={`${race.name} Turnuva Başlat`}
@@ -105,7 +127,7 @@ const TurnuvaList = ({ navigation }) => {
         <ListTitleText>Sira</ListTitleText>
         <ListTitleText>Katilimci</ListTitleText>
         <ListTitleText>
-          {race.passingTime.length == 0 ? "Başlat" : "Sure"}
+          {race.participants[0].passingTime.length == 0 ? "Başlat" : "Sure"}
         </ListTitleText>
       </ListTitleContainer>
       <FlatList
@@ -148,8 +170,7 @@ const TurnuvaList = ({ navigation }) => {
         <RectangleButton
           title="Bitiş"
           onPress={() => {
-            saveRace();
-            navigation.navigate("Home");
+            setResultModal(true);
           }}
         />
       </ButtonsContainer>
@@ -162,6 +183,13 @@ const TurnuvaList = ({ navigation }) => {
         messageBLE={message}
         setMessageBLE={setMessage}
         sendZToDevice={sendZToDevice}
+      />
+      <TurnuvaResultModal
+        visibility={resultModal}
+        setVisibility={setResultModal}
+        saveRace={saveRace}
+        navigation={navigation}
+        dataArray={ObjectMaker}
       />
     </ScreenLayout>
   );

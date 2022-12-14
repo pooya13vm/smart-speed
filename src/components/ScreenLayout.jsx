@@ -3,12 +3,12 @@ import { Image, Text, TouchableOpacity } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { COLORS } from "../tools/colors";
 import BackGround from "./BackGround";
-import Icon from "react-native-vector-icons/FontAwesome";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const ScreenLayout = ({ children, title, navigationFunction }) => {
   return (
     <BackGround>
-      {title && (
+      {title ? (
         <TouchableOpacity
           style={{
             position: "absolute",
@@ -21,8 +21,23 @@ const ScreenLayout = ({ children, title, navigationFunction }) => {
           }}
           onPress={navigationFunction}
         >
-          <Icon name="angle-left" color="#fefefe" size={22} />
+          <Icon name="chevron-left" color="#fefefe" size={30} />
           <Text style={{ color: "#fefefe", fontSize: 18 }}>Geri</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={{
+            position: "absolute",
+            right: 0,
+            top: 25,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: 60,
+          }}
+          onPress={navigationFunction}
+        >
+          <Icon name="web" color="#fefefe" size={35} />
         </TouchableOpacity>
       )}
 

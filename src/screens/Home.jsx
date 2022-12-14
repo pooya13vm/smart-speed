@@ -1,10 +1,16 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import styled from "styled-components";
 import { AppContext } from "../context/context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { BleManager } from "react-native-ble-plx";
 import base64 from "react-native-base64";
-import { LogBox, Animated } from "react-native";
+import { LogBox, Animated, Linking } from "react-native";
 import { PERMISSIONS } from "react-native-permissions";
 
 //components
@@ -19,12 +25,12 @@ const BLTManager = new BleManager();
 LogBox.ignoreLogs(["new NativeEventEmitter"]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
-const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
-// const SERVICE_UUID = "0000FFE0-0000-1000-8000-00805F9B34FB";
-const MESSAGE_UUID = "6d68efe5-04b6-4a85-abc4-c2670b7bf7fd";
-// const MESSAGE_UUID = "0000FFE1-0000-1000-8000-00805F9B34FB";
-const BOX_UUID = "f27b53ad-c63d-49a0-8c0f-9f297e6cc520";
-// const BOX_UUID = "0000FFE1-0000-1000-8000-00805F9B34FB";
+// const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
+const SERVICE_UUID = "0000FFE0-0000-1000-8000-00805F9B34FB";
+// const MESSAGE_UUID = "6d68efe5-04b6-4a85-abc4-c2670b7bf7fd";
+const MESSAGE_UUID = "0000FFE1-0000-1000-8000-00805F9B34FB";
+// const BOX_UUID = "f27b53ad-c63d-49a0-8c0f-9f297e6cc520";
+const BOX_UUID = "0000FFE1-0000-1000-8000-00805F9B34FB";
 
 const ButtonsContainer = styled.View`
   width: 80%;
@@ -128,6 +134,24 @@ const Home = ({ navigation }) => {
       scanDevices();
     }
   };
+  const handleURLPress = useCallback(async () => {
+    // Checking if the link is supported for links with custom URL scheme.
+    const supported = await Linking.canOpenURL(
+      "https://www.smartpilatesstudio.com/smart-speed-2/"
+    );
+
+    if (supported) {
+      // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+      // by some browser in the mobile
+      await Linking.openURL(
+        "https://www.smartpilatesstudio.com/smart-speed-2/"
+      );
+    } else {
+      Alert.alert(
+        `Don't know how to open this URL: ${"https://www.smartpilatesstudio.com/smart-speed-2/"}`
+      );
+    }
+  }, ["https://www.smartpilatesstudio.com/smart-speed-2/"]);
 
   const scanDevices = async () => {
     BLTManager.startDeviceScan(null, null, (error, scannedDevice) => {
@@ -252,7 +276,7 @@ const Home = ({ navigation }) => {
     transform: [{ scale: progress }],
   };
   return (
-    <ScreenLayout>
+    <ScreenLayout navigationFunction={handleURLPress}>
       <ButtonsContainer>
         <Button onPress={() => navigation.navigate("Parkur")}>
           <Icon name="road" size={24} color={COLORS.darkBlue} />

@@ -43,7 +43,7 @@ const batteryName = (percentage) => {
   if (percentage >= 50 && percentage < 85) {
     return "battery-3";
   }
-  if (percentage >= 85 && percentage < 100) {
+  if (percentage >= 85 && percentage <= 100) {
     return "battery-4";
   }
 };
@@ -115,7 +115,7 @@ const Sarj = ({ navigation }) => {
           keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => (
             <ItemContainer>
-              <ItemText>{index + 1}</ItemText>
+              {/* <ItemText>{index + 1}</ItemText> */}
               <ItemText>{item.name}</ItemText>
               {item.percentage != 0 ? (
                 <>

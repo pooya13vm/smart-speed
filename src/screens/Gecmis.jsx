@@ -275,9 +275,7 @@ const Gecmis = ({ navigation }) => {
     let text = "";
     if (listData.length > 0) {
       listData.map((item) => {
-        let personDetail = `${item.name} ${displayTime(
-          item.time[item.time.length - 1]
-        )}`;
+        let personDetail = `${item.name} ${displayTime(item.time)}`;
         text = `${text} \n ${personDetail} `;
       });
     }

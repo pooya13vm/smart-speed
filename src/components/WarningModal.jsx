@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, View, Text } from "react-native";
+import { Modal } from "react-native";
 import styled from "styled-components";
 import Lottie from "lottie-react-native";
 import { COLORS } from "../tools/colors";
@@ -22,6 +22,21 @@ const ModalContainer = styled.View`
   align-items: center;
   padding-horizontal: 15px;
 `;
+const AnimationContainer = styled.View`
+  width: 120px;
+  height: 120px;
+`;
+const TitleText = styled.Text`
+  color: ${COLORS.darkBlue};
+  font-weight: bold;
+  font-size: 24px;
+`;
+const NoteText = styled.Text`
+  color: ${COLORS.darkBlue};
+  font-weight: bold;
+  font-size: 16px;
+  margin-vertical: 30px;
+`;
 const WarningModal = ({
   warningVisibility,
   setWarningVisibility,
@@ -32,29 +47,16 @@ const WarningModal = ({
     <Modal visible={warningVisibility} animationType="fade" transparent={true}>
       <ModalBackground>
         <ModalContainer>
-          <View style={{ width: 120, height: 120 }}>
+          <AnimationContainer>
             <Lottie
               style={{ flex: 1 }}
               source={require("../assets/images/104320-warning-red.json")}
               autoPlay
               loop
             />
-          </View>
-          <Text
-            style={{ color: COLORS.darkBlue, fontWeight: "bold", fontSize: 24 }}
-          >
-            {title}
-          </Text>
-          <Text
-            style={{
-              color: COLORS.darkBlue,
-              fontWeight: "bold",
-              fontSize: 16,
-              marginVertical: 30,
-            }}
-          >
-            {note}
-          </Text>
+          </AnimationContainer>
+          <TitleText>{title}</TitleText>
+          <NoteText>{note}</NoteText>
           <RectangleButton
             title="Tamam"
             onPress={() => setWarningVisibility(false)}

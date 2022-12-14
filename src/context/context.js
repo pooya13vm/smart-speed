@@ -57,8 +57,6 @@ export const AppProvider = ({ children }) => {
   // AsyncStorage.clear();
 
   const saveToStorage = async (contact) => {
-    console.log("saving to storage ....", contact);
-
     if (!isRegistered) {
       try {
         const stringified = await JSON.stringify(contact);
@@ -76,7 +74,7 @@ export const AppProvider = ({ children }) => {
       console.log(error);
     }
   };
-  // console.log(parkur);
+
   const saveRace = () => {
     if (race.name) {
       setAllRaces([...allRaces, race]);

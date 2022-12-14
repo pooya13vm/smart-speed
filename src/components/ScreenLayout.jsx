@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Image, Text, TouchableOpacity } from "react-native";
+import { Image, Text, TouchableOpacity } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { COLORS } from "../tools/colors";
 import BackGround from "./BackGround";
@@ -29,7 +29,6 @@ const ScreenLayout = ({ children, title, navigationFunction }) => {
       <LinearGradient
         colors={["#fefefe", "#D7D7D6"]}
         style={{
-          // backgroundColor: "#D7D7D6",
           height: "82%",
           width: "90%",
           alignSelf: "center",

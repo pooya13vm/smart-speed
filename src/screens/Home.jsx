@@ -4,13 +4,12 @@ import { AppContext } from "../context/context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { BleManager } from "react-native-ble-plx";
 import base64 from "react-native-base64";
-import { LogBox, Animated, Alert } from "react-native";
+import { LogBox, Animated } from "react-native";
 import { PERMISSIONS } from "react-native-permissions";
 
 //components
 import ScreenLayout from "../components/ScreenLayout";
 import { COLORS } from "../tools/colors";
-import { getPermission } from "../tools/getPermittion";
 import BLConnectionModal from "../components/BLConnectionModal";
 import TurnuvaOLModal from "../components/TurnuvaOLModal";
 import WarningModal from "../components/WarningModal";
@@ -70,7 +69,6 @@ export const sendBoxValue = async (value, id) => {
 
 const Home = ({ navigation }) => {
   //states
-  const [isAllowed, setAllowed] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [boxValue, setBoxValue] = useState();
   const [isScanning, setScanning] = useState(false);
@@ -109,8 +107,6 @@ const Home = ({ navigation }) => {
         Animated.delay(50),
       ])
     ).start();
-    // getPermission().then((result) => setAllowed(true));
-    //turning on device Bluetooth
     PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION;
     PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
     PERMISSIONS.ANDROID.BLUETOOTH_ADVERTISE;
@@ -122,20 +118,15 @@ const Home = ({ navigation }) => {
       }
     });
     saveToStorage(contact[0]);
-    // setAllowed(true); //-----------------
   }, [progress, isConnected, connectedDevice]);
 
   //handlers
   const connectingToDevice = () => {
-    // if (isAllowed) {
     setModalVisible(true);
     if (!isConnected) {
       setScanning(true);
       scanDevices();
     }
-    // } else {
-    //   return Alert.alert("Lütfen ayarlarda Bluetooth erişimine izin verin");
-    // }
   };
 
   const scanDevices = async () => {
@@ -144,7 +135,6 @@ const Home = ({ navigation }) => {
       if (error) {
         console.warn(error);
       }
-
       if (scannedDevice) {
         if (
           scannedDevice.name == "BT05" ||
@@ -230,11 +220,6 @@ const Home = ({ navigation }) => {
         console.log("Connection established");
       });
   }
-  // let a = "00:23:45";
-  // let b = "00:02:59";
-  // let c = "01:34:01";
-  // let anum = a.replace(/:/g, "");
-  // console.log(+anum);
 
   async function disconnectBluetooth() {
     console.log("Disconnecting start");
@@ -248,7 +233,6 @@ const Home = ({ navigation }) => {
           console.log("DC completed")
         );
       }
-
       const connectionStatus = await connectedDevice.isConnected();
       if (!connectionStatus) {
         setIsConnected(false);

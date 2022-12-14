@@ -12,6 +12,10 @@ import { COLORS } from "../tools/colors";
 import DropdownComponent from "../components/Dropdown";
 import ParkurItem from "../components/ParkurListItem";
 import WarningModal from "../components/WarningModal";
+import {
+  DropdownDataForTip,
+  DropdownDataForNumbers,
+} from "../tools/DropdownData";
 
 //context
 import { AppContext } from "../context/context";
@@ -186,42 +190,17 @@ const Parkur = ({ navigation }) => {
         />
       </NameInputContainer>
       <InputsContainer>
-        {/* <Input
-          placeholder="Cihaz Sayısı"
-          placeholderTextColor={COLORS.darkGreen}
-          value={number}
-          containerStyle={{
-            width: "30%",
-            alignItems: "center",
-          }}
-          keyboardType="number-pad"
-          inputStyle={{
-            color: COLORS.darkGreen,
-            textAlign: "center",
-          }}
-          inputContainerStyle={{
-            borderBottomWidth: 0,
-          }}
-          style={{
-            borderWidth: 1,
-            borderRadius: 10,
-            borderColor: COLORS.darkBlue,
-            fontSize: 14,
-            marginTop: 26,
-          }}
-          onChangeText={(val) => setNumber(val)}
-        /> */}
         <Dropdown1Container>
           <DropdownComponent
             placeholder="Cihaz"
-            data={DropdownDataNumbers}
+            data={DropdownDataForNumbers}
             onChangeSet={setNumber}
           />
         </Dropdown1Container>
         <Dropdown2Container>
           <DropdownComponent
             placeholder="Tipi Seç"
-            data={DropdownData}
+            data={DropdownDataForTip}
             onChangeSet={setTip}
           />
         </Dropdown2Container>
@@ -247,7 +226,7 @@ const Parkur = ({ navigation }) => {
               style={{ flex: 1 }}
               source={require("../assets/images/lf30_editor_e33eotje.json")}
               autoPlay
-              loop
+              loop={false}
             />
             <AnimationTitle>Kaydetmek için lütfen bekleyin</AnimationTitle>
           </AnimationContainer>

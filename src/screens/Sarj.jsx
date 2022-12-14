@@ -1,11 +1,34 @@
 import React, { useContext, useEffect, useState } from "react";
-import ScreenLayout from "../components/ScreenLayout";
-import { View, Text, FlatList } from "react-native";
-import { COLORS } from "../tools/colors";
+import { FlatList } from "react-native";
+import styled from "styled-components";
 import Icon from "react-native-vector-icons/FontAwesome";
 import uuid from "react-native-uuid";
 import Lottie from "lottie-react-native";
 import { AppContext } from "../context/context";
+
+// personal components
+import ScreenLayout from "../components/ScreenLayout";
+import { COLORS } from "../tools/colors";
+
+const ItemContainer = styled.View`
+  flex-direction: row;
+  width: 100%;
+  padding-horizontal: 10px;
+  margin-top: 10px;
+  align-self: center;
+  justify-content: space-around;
+`;
+const ItemText = styled.Text`
+  font-size: 16px;
+  color: ${COLORS.darkBlue};
+`;
+const AnimationContainer = styled.View`
+  margin-top: 25%;
+  justify-content: center;
+  align-items: center;
+  width: 120px;
+  height: 120px;
+`;
 
 const batteryName = (percentage) => {
   if (percentage < 10) {
@@ -35,26 +58,34 @@ const Sarj = ({ navigation }) => {
   const { chargeMessage } = useContext(AppContext);
 
   useEffect(() => {
+    //making charge data array
     if (chargeMessage.includes(":")) {
-      if (chargeData.indexOf(chargeMessage) === -1) {
-        setChargeData([chargeMessage, ...chargeData]);
-        console.log("new data...");
+      let index = chargeMessage.indexOf(":");
+      let name = chargeMessage.slice(0, index);
+      let charge = chargeMessage.slice(index + 1, chargeMessage.length + 1);
+      if (chargeData.map((e) => e.device).indexOf(name) === -1) {
+        let myObj = {
+          device: name,
+          charge: charge,
+        };
+        setChargeData([...chargeData, myObj]);
+      } else {
+        let index = chargeData.map((e) => e.device).indexOf(name);
+        let copyOfState = [...chargeData];
+        copyOfState[index].charge = charge;
+        setChargeData(copyOfState);
       }
     }
   }, [chargeMessage]);
-  // console.log("message on sarj: ", chargeMessage);
 
   useEffect(() => {
     if (chargeData.length > 0) {
       const setItem = async () => {
         const devicesArray = [];
         for (let i = 0; i < chargeData.length; i++) {
-          let index = chargeData[i].indexOf(":");
-          let name = chargeData[i].slice(0, index);
-          let charge = chargeData[i].slice(index + 1, chargeData[i].length);
           let device = {
-            name: name,
-            percentage: Number(charge),
+            name: chargeData[i].device,
+            percentage: Number(chargeData[i].charge),
             id: uuid.v4(),
           };
           devicesArray.push(device);
@@ -83,22 +114,9 @@ const Sarj = ({ navigation }) => {
           data={list}
           keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => (
-            <View
-              style={{
-                flexDirection: "row",
-                width: "100%",
-                paddingHorizontal: 10,
-                marginTop: 10,
-                alignSelf: "center",
-                justifyContent: "space-around",
-              }}
-            >
-              <Text style={{ fontSize: 16, color: COLORS.darkBlue }}>
-                {index + 1}
-              </Text>
-              <Text style={{ fontSize: 16, color: COLORS.darkBlue }}>
-                {item.name}
-              </Text>
+            <ItemContainer>
+              <ItemText>{index + 1}</ItemText>
+              <ItemText>{item.name}</ItemText>
               {item.percentage != 0 ? (
                 <>
                   <Icon
@@ -106,35 +124,23 @@ const Sarj = ({ navigation }) => {
                     size={16}
                     color={COLORS.darkBlue}
                   />
-                  <Text
-                    style={{ fontSize: 16, color: COLORS.darkBlue }}
-                  >{`${item.percentage} %`}</Text>
+                  <ItemText>{`${item.percentage} %`}</ItemText>
                 </>
               ) : (
-                <Text style={{ fontSize: 16, color: COLORS.darkBlue }}>
-                  Cihaz Kapalı
-                </Text>
+                <ItemText>Cihaz Kapalı</ItemText>
               )}
-            </View>
+            </ItemContainer>
           )}
         />
       ) : (
-        <View
-          style={{
-            marginTop: "25%",
-            justifyContent: "center",
-            alignItems: "center",
-            width: 120,
-            height: 120,
-          }}
-        >
+        <AnimationContainer>
           <Lottie
             style={{ flex: 1 }}
             source={require("../assets/images/98788-loading.json")}
             autoPlay
             loop
           />
-        </View>
+        </AnimationContainer>
       )}
     </ScreenLayout>
   );

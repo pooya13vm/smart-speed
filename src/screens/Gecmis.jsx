@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { FlatList, Modal, Animated, Alert } from "react-native";
+import { FlatList, Modal, Animated, Alert, Share } from "react-native";
 import Lottie from "lottie-react-native";
 import styled from "styled-components";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -11,8 +11,8 @@ import { COLORS } from "../tools/colors";
 import { AppContext } from "../context/context";
 import { displayTime } from "../tools/displayTime";
 import CircleButton from "../components/CircleButton";
-import { View, Text, Share } from "react-native";
 import RectangleButton from "../components/RectangleButton";
+import { makeTurkishDate } from "../tools/turkishCalender";
 
 //styled components
 const Container = styled.View`
@@ -78,6 +78,10 @@ const ButtonContainer = styled.TouchableOpacity`
   padding-vertical: 12px;
   border-color: ${COLORS.darkBlue};
 `;
+const ButtonMainContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-evenly;
+`;
 
 // detail Modal styles components
 const ModalBackground = styled.View`
@@ -118,6 +122,9 @@ const ModalItemText = styled.Text`
   color: ${(props) => (!props.isEnd ? COLORS.darkBlue : COLORS.lightGreen)};
   font-weight: ${(props) => (props.isEnd ? "bold" : "400")};
 `;
+const ModalButtonContainer = styled.View`
+  margin-bottom: 40px;
+`;
 // be sure modal styles
 const ModalBackground2 = styled.View`
   width: 100%;
@@ -136,6 +143,27 @@ const ModalContainer2 = styled.View`
   align-self: center;
   align-items: center;
   padding-horizontal: 15px;
+`;
+const ModalAnimationSize = styled.View`
+  width: 120px;
+  height: 120px;
+`;
+const ModalTitleWarning = styled.Text`
+  color: ${COLORS.darkBlue};
+  font-weight: bold;
+  font-size: 24px;
+`;
+const ModalTextWarning = styled.Text`
+  color: ${COLORS.darkBlue};
+  font-weight: bold;
+  font-size: 16px;
+  margin-vertical: 30px;
+`;
+const ModalBtnContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  width: 90%;
+  margin-top: 30px;
 `;
 
 const Gecmis = ({ navigation }) => {
@@ -169,26 +197,6 @@ const Gecmis = ({ navigation }) => {
     }
   }, [allRaces]);
 
-  const makeTurkishDate = (date) => {
-    const indexOfSpace = date.indexOf(" ");
-    const restOfDate = date.slice(indexOfSpace, date.length);
-    const englishMonth = date.slice(0, indexOfSpace);
-    let turkishMonth = "";
-    if (englishMonth === "Jan") turkishMonth = "Ocak";
-    if (englishMonth === "Feb") turkishMonth = "şubat";
-    if (englishMonth === "Mar") turkishMonth = "Mart";
-    if (englishMonth === "Apr") turkishMonth = "Nisan";
-    if (englishMonth === "May") turkishMonth = "Mayıs";
-    if (englishMonth === "June") turkishMonth = "Haziran";
-    if (englishMonth === "July") turkishMonth = "Temmuz";
-    if (englishMonth === "Aug") turkishMonth = "Ağustos";
-    if (englishMonth === "Sept") turkishMonth = "Eylül";
-    if (englishMonth === "Oct") turkishMonth = "Ekim";
-    if (englishMonth === "Nov") turkishMonth = "Kasım";
-    if (englishMonth === "Dec") turkishMonth = "Aralık";
-
-    return turkishMonth + restOfDate;
-  };
   //handlers
   const handleSelectedRace = async (id) => {
     setLoading(true);
@@ -350,19 +358,14 @@ const Gecmis = ({ navigation }) => {
               )}
             </DataTopContainer>
             {!loading && (
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-evenly",
-                }}
-              >
+              <ButtonMainContainer>
                 <ButtonContainer onPress={() => setWarningVisibility(true)}>
                   <Icon name="trash" size={24} color={COLORS.darkBlue} />
                 </ButtonContainer>
                 <ButtonContainer onPress={onShare}>
                   <Icon name="share-alt" size={24} color={COLORS.darkBlue} />
                 </ButtonContainer>
-              </View>
+              </ButtonMainContainer>
             )}
           </DataContainer>
         )}
@@ -404,12 +407,12 @@ const Gecmis = ({ navigation }) => {
                     );
                   }}
                 />
-                <View style={{ marginBottom: 40 }}>
+                <ModalButtonContainer>
                   <CircleButton
                     title="Tamam"
                     onPressFunction={() => setShowDetail(false)}
                   />
-                </View>
+                </ModalButtonContainer>
               </ModalContainer>
             </ModalBackground>
           </Modal>
@@ -422,41 +425,19 @@ const Gecmis = ({ navigation }) => {
         >
           <ModalBackground2>
             <ModalContainer2>
-              <View style={{ width: 120, height: 120 }}>
+              <ModalAnimationSize>
                 <Lottie
                   style={{ flex: 1 }}
                   source={require("../assets/images/104320-warning-red.json")}
                   autoPlay
                   loop
                 />
-              </View>
-              <Text
-                style={{
-                  color: COLORS.darkBlue,
-                  fontWeight: "bold",
-                  fontSize: 24,
-                }}
-              >
-                "Lütfen Dikkatli Ol"
-              </Text>
-              <Text
-                style={{
-                  color: COLORS.darkBlue,
-                  fontWeight: "bold",
-                  fontSize: 16,
-                  marginVertical: 30,
-                }}
-              >
+              </ModalAnimationSize>
+              <ModalTitleWarning>"Lütfen Dikkatli Ol"</ModalTitleWarning>
+              <ModalTextWarning>
                 "öğeyi sileceğinizden emin misiniz?""
-              </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  width: "90%",
-                  marginTop: 30,
-                }}
-              >
+              </ModalTextWarning>
+              <ModalBtnContainer>
                 <RectangleButton
                   title="Hayır"
                   onPress={() => setWarningVisibility(false)}
@@ -468,7 +449,7 @@ const Gecmis = ({ navigation }) => {
                     setWarningVisibility(false);
                   }}
                 />
-              </View>
+              </ModalBtnContainer>
             </ModalContainer2>
           </ModalBackground2>
         </Modal>

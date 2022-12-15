@@ -62,7 +62,6 @@ const ButtonText = styled.Text`
 `;
 
 export const sendBoxValue = async (value, id) => {
-  console.log("in sending value : ", id);
   BLTManager.writeCharacteristicWithResponseForDevice(
     id,
     SERVICE_UUID,
@@ -135,14 +134,11 @@ const Home = ({ navigation }) => {
     }
   };
   const handleURLPress = useCallback(async () => {
-    // Checking if the link is supported for links with custom URL scheme.
     const supported = await Linking.canOpenURL(
       "https://www.smartpilatesstudio.com/smart-speed-2/"
     );
 
     if (supported) {
-      // Opening the link with some app, if the URL scheme is "http" the web link should be opened
-      // by some browser in the mobile
       await Linking.openURL(
         "https://www.smartpilatesstudio.com/smart-speed-2/"
       );
@@ -155,7 +151,6 @@ const Home = ({ navigation }) => {
 
   const scanDevices = async () => {
     BLTManager.startDeviceScan(null, null, (error, scannedDevice) => {
-      console.log("start scanning ...");
       if (error) {
         console.warn(error);
       }
@@ -179,8 +174,6 @@ const Home = ({ navigation }) => {
     }, 5000);
   };
   async function connectDevice(device) {
-    console.log("connecting to Device:", device.name);
-
     device
       .connect()
       .then((device) => {
@@ -190,7 +183,6 @@ const Home = ({ navigation }) => {
       })
       .then((device) => {
         BLTManager.onDeviceDisconnected(device.id, (error, device) => {
-          console.log("Device DC");
           setIsConnected(false);
         });
         device
@@ -210,15 +202,15 @@ const Home = ({ navigation }) => {
             if (characteristic.value != null) {
               if (base64.decode(characteristic.value).includes(":")) {
                 setChargeMessage(base64.decode(characteristic.value));
-                console.log(
-                  "Message charge: ",
-                  base64.decode(characteristic.value)
-                );
+                // console.log(
+                //   "Message charge: ",
+                //   base64.decode(characteristic.value)
+                // );
               } else {
-                console.log(
-                  "Message turnuva: ",
-                  base64.decode(characteristic.value)
-                );
+                // console.log(
+                //   "Message turnuva: ",
+                //   base64.decode(characteristic.value)
+                // );
                 setMessage(base64.decode(characteristic.value));
               }
             }
@@ -232,22 +224,18 @@ const Home = ({ navigation }) => {
           (error, characteristic) => {
             if (characteristic.value != null) {
               setBoxValue(base64.decode(characteristic.value));
-              console.log(
-                "Box Value update received: ",
-                base64.decode(characteristic.value)
-              );
+              // console.log(
+              //   "Box Value update received: ",
+              //   base64.decode(characteristic.value)
+              // );
             }
           },
           "boxtransaction"
         );
-
-        console.log("Connection established");
       });
   }
 
   async function disconnectBluetooth() {
-    console.log("Disconnecting start");
-
     if (connectedDevice != null) {
       const isDeviceConnected = await connectedDevice.isConnected();
       if (isDeviceConnected) {

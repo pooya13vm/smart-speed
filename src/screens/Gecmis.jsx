@@ -233,7 +233,6 @@ const Gecmis = ({ navigation }) => {
         setListData(data);
       }
     } catch (error) {
-      console.log(error);
       setLoading(false);
     }
   };
@@ -246,7 +245,6 @@ const Gecmis = ({ navigation }) => {
   };
   const handleShowDetail = (name) => {
     const filtered = personsData.filter((item) => item.name === name);
-    console.log("filtered", filtered);
     setSelectedItem(filtered[0]);
   };
   const onShare = async () => {

@@ -140,12 +140,8 @@ const Parkur = ({ navigation }) => {
     saveToStorage(filtered);
   };
   const saveToStorage = async (parkur) => {
-    try {
-      const stringified = await JSON.stringify(parkur);
-      await AsyncStorage.setItem("@parkur", stringified);
-    } catch (error) {
-      console.log(error);
-    }
+    const stringified = await JSON.stringify(parkur);
+    await AsyncStorage.setItem("@parkur", stringified);
   };
   useEffect(() => {
     handleLikeAnimation();

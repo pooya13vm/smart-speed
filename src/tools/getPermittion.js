@@ -60,16 +60,16 @@ export const getPermission = async () => {
       granted4 === PermissionsAndroid.RESULTS.GRANTED
       // granted5 === PermissionsAndroid.RESULTS.GRANTED
     ) {
-      console.log("Location permission for bluetooth scanning granted");
+      // console.log("Location permission for bluetooth scanning granted");
       //   setAllowed(true);
       return true;
     } else {
-      console.log("Location permission for bluetooth scanning revoked");
+      // console.log("Location permission for bluetooth scanning revoked");
       //   setAllowed(false);
       return false;
     }
   } catch (err) {
-    console.warn(err);
+    // console.warn(err);
     // setAllowed(false);
     return false;
   }

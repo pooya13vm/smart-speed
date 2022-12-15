@@ -120,12 +120,8 @@ const Katilimci = ({ navigation }) => {
     setPersons(filtered);
   };
   const saveToStorage = async (katilimci) => {
-    try {
-      const stringified = await JSON.stringify(katilimci);
-      await AsyncStorage.setItem("@katilimci", stringified);
-    } catch (error) {
-      console.log(error);
-    }
+    const stringified = await JSON.stringify(katilimci);
+    await AsyncStorage.setItem("@katilimci", stringified);
   };
 
   const inputsStyle = {

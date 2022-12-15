@@ -97,7 +97,6 @@ const TurnuvaModal = ({
   const start = useCallback(() => {
     if (messageBLE) {
       if (messageBLE === "b") {
-        console.log("in start ...");
         const copy = [...devices];
         copy[0] = "Başladı";
         setDevices(copy);

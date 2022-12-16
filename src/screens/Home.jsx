@@ -117,6 +117,7 @@ const Home = ({ navigation }) => {
     PERMISSIONS.ANDROID.BLUETOOTH_ADVERTISE;
     PERMISSIONS.ANDROID.BLUETOOTH_CONNECT;
     PERMISSIONS.ANDROID.BLUETOOTH_SCAN;
+    PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL;
     BLTManager.state().then((val) => {
       if (val !== "PoweredOn") {
         BLTManager.enable().then(() => console.log("bluetooth is turned on"));

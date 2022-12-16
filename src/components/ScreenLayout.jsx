@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, Text, TouchableOpacity } from "react-native";
+import { Image, Text, TouchableOpacity, Platform } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { COLORS } from "../tools/colors";
 import BackGround from "./BackGround";
@@ -47,7 +47,7 @@ const ScreenLayout = ({ children, title, navigationFunction }) => {
           height: "82%",
           width: "90%",
           alignSelf: "center",
-          marginTop: "25%",
+          marginTop: Platform.OS === "ios" ? "20%" : "25%",
           borderRadius: 30,
           alignItems: "center",
         }}
@@ -57,7 +57,7 @@ const ScreenLayout = ({ children, title, navigationFunction }) => {
           style={{
             width: 150,
             height: 150,
-            marginTop: -60,
+            marginTop: Platform.OS === "ios" ? 10 : -60,
             backgroundColor: "#fefefe",
             borderRadius: 100,
           }}
